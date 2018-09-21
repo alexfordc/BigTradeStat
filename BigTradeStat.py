@@ -1,14 +1,17 @@
 # conding=utf-8
 
 from WindPy import w
-from functions import *
+from OperFunc import *
 import time
+
+###
+timelist = ["22:43","23:00"]
+timeinterval = 1
+codelist = ['RB.SHF']
 
 
 w.start()
 
-timelist = ["22:43","23:00"]
-timeinterval = 1
 timelist2 = TransTimeList(timelist)
 while CheckTime(timelist2):
     interval = CheckInterval(timeinterval, timelist2)

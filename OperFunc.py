@@ -21,7 +21,8 @@ def TransTimeList(timelist):
     return timelist2
 
 ### 检查当前时间是否已过当天收盘时间
-def CheckTime(timelist2):
+def CheckTime(timelist):
+    timelist2 = TransTimeList(timelist)
     nowtime = datetime.now()
     if nowtime > timelist2[-1]:     #默认时间列表中最后一个应为收盘时间点
         print(u"已过结束时间：",timelist2[-1])
@@ -30,7 +31,8 @@ def CheckTime(timelist2):
         return True
 
 ### 计算时间间隔
-def CheckInterval(initinterval,timelist2):
+def CalcInterval(initinterval,timelist):
+    timelist2 = TransTimeList(timelist)
     nowtime = datetime.now()
     if nowtime < timelist2[0]:  #当前时间还未到最早开盘时间，时间间隔为两者时间差秒数与1秒的最大值。（避免差0.*秒到开盘时间，时间差秒数为0的情况）
         print(u"尚未到开始时间，等待：",timelist2[0])

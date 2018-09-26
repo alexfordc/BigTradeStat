@@ -1,8 +1,57 @@
 # conding=utf-8
-from datetime import datetime, date, timedelta
-#import xlrd,time,os, operator, calendar
-#import matplotlib.pyplot as plt
-#import numpy as np
+from WindPy import w
+from datetime import datetime
+import pandas as pd
+import csv,os
+
+def strlist(list):
+    for i in range(len(list)):
+        list[i] = str(list[i])
+    return  list
+
+def WriteTick(codelist,tradedata):
+    today = datetime.now().strftime('%Y%m%d')
+    for i in range(len(codelist)):
+        codename = codelist[i]
+        filename = codename+'_'+today+'.csv'
+        if os.path.isfile(filename):
+            tempfile = open(filename, 'r')
+            reader = csv.reader(tempfile)
+            lastline = list(reader)[-1]
+            tempfile.close()
+            if (lastline != strlist(tradedata[i])):
+                csvfile = open(filename, 'a', newline='')
+                writeCSV = csv.writer(csvfile)
+                writeCSV.writerow(strlist(tradedata[i]))
+                print(codelist[i],':',strlist(tradedata[i]))
+                csvfile.close()
+            else:
+                print('重复数据:',codelist[i], ',', strlist(tradedata[i]))
+        else:
+            csvfile = open(filename, 'w', newline='')
+            writeCSV = csv.writer(csvfile)
+            writeCSV.writerow(["Date","Time","LastPX","Last_Vol","OI_Change","Nature"])
+            writeCSV.writerow(strlist(tradedata[i]))
+            print(codelist[i], ':', strlist(tradedata[i]))
+            csvfile.close()
+
+# 获取实时交易数据
+def ReadTradeInfo(codelist):
+    naturedict = {1:'空开',2:'空平',3:'空换',4:'多开',5:'多平',6:'多换',7:'双开',8:'双平'}
+    tradedata = {}
+    code = ','.join(codelist)
+    tradeinfo = w.wsq(code, "rt_date,rt_time,rt_last,rt_last_vol,rt_oi_change,rt_nature").Data
+    for i in range(len(codelist)):
+        tradecode = codelist[i]
+        rt_date = str(tradeinfo[0][i]).split('.')[0]
+        rt_timeorigin = str(tradeinfo[1][i]).split('.')[0]
+        rt_time = ("%s:%s:%s") % (rt_timeorigin[:-4],rt_timeorigin[-4:-2],rt_timeorigin[-2:])
+        rt_last = tradeinfo[2][i]
+        rt_last_vol = tradeinfo[3][i]
+        rt_oi_change = tradeinfo[4][i]
+        rt_nature = naturedict[int(tradeinfo[5][i])]
+        tradedata[i] = [rt_date,rt_time,rt_last,rt_last_vol,rt_oi_change,rt_nature]
+    return tradedata
 
 ### 检查指定的时间节点是否为偶数个、按时间先后顺序，并转换为datetime格式
 def TransTimeList(timelist):

@@ -1,9 +1,7 @@
 # conding=utf-8
 
 from WindPy import w
-from OperFunc import *
-from ReadFunc import *
-from WriteFunc import *
+from Functions import *
 import time
 
 timelist = ["9:00","11:30","15:00","17:30","21:00","23:30"]

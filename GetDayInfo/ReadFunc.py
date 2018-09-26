@@ -31,32 +31,3 @@ def ReadTradeInfo(codelist):
         rt_nature = naturedict[int(tradeinfo[5][i])]
         tradedata[i] = [rt_date,rt_time,rt_last,rt_last_vol,rt_oi_change,rt_nature]
     return tradedata
-
-# 从csv文件读取以往交易数据
-def ReadOldTradeInfo(codelist):
-    nowdate = datetime.now().strftime('%Y%m%d')
-    #获取各品种以往数据的文件名
-    allfiles = os.listdir()
-    codefiles = {}
-    oldtradeinfo = {}
-    for i in range(len(codelist)):
-        codefiles[i] = []
-        oldtradeinfo[i] = pd.DataFrame
-    for item in allfiles:
-        if (item.split('.')[-1] == 'csv'):
-            for i in range(len(codelist)):
-                if codelist[i] in item:
-                    codefiles[i].append(item)
-    for i in range(len(codelist)):
-        codefiles[i] = sorted(codefiles[i])
-    #print(codefiles)
-    # 读取各品种以往数据
-    for i in range(len(codelist)):
-        datalist = []
-        codefilelist = codefiles[i]
-        for j in range(len(codefilelist)):
-            data = pd.read_csv(codefilelist[j],encoding='gb2312',dtype=str)
-            datalist.append(data)
-        if datalist:
-            oldtradeinfo[i] = pd.concat(datalist,ignore_index=True) #合并为一个dataframe
-    return (oldtradeinfo)

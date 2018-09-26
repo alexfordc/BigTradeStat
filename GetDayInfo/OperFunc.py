@@ -46,8 +46,3 @@ def CalcInterval(initinterval,timelist):
                 interval = max((timelist2[2*i+2]-nowtime).seconds,1)
                 break
     return interval
-
-# 统计各品种的大单比例
-def StatBigTrade(codelist,bigline,tradedata):
-    for i in range(len(codelist)):
-        print()

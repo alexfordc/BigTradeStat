@@ -43,7 +43,10 @@ def ReadTradeInfo(codelist):
     tradeinfo = w.wsq(code, "rt_date,rt_time,rt_last,rt_last_vol,rt_oi_change,rt_nature").Data
     for i in range(len(codelist)):
         tradecode = codelist[i]
-        rt_date = str(tradeinfo[0][i]).split('.')[0]
+        if '.' in str(tradeinfo[0][i]):
+            rt_date = str(tradeinfo[0][i]).split('.')[0]
+        else:
+            rt_date = str(tradeinfo[0][i])
         rt_timeorigin = str(tradeinfo[1][i]).split('.')[0]
         rt_time = ("%s:%s:%s") % (rt_timeorigin[:-4],rt_timeorigin[-4:-2],rt_timeorigin[-2:])
         rt_last = tradeinfo[2][i]

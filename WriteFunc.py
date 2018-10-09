@@ -7,7 +7,7 @@ def strlist(list):
         list[i] = str(list[i])
     return  list
 
-def WriteTick(codelist,tradedata):
+def WriteTickMergeData(codelist,tradedata,olddata):
     today = datetime.now().strftime('%Y%m%d')
     for i in range(len(codelist)):
         codename = codelist[i]
@@ -24,7 +24,7 @@ def WriteTick(codelist,tradedata):
                 print(codelist[i],':',strlist(tradedata[i]))
                 csvfile.close()
             else:
-                print('重复数据:',codelist[i], ',', strlist(tradedata[i]))
+                print('重复数据,',codelist[i], ':', strlist(tradedata[i]))
         else:
             csvfile = open(filename, 'w', newline='')
             writeCSV = csv.writer(csvfile)

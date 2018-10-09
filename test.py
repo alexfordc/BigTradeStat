@@ -8,7 +8,7 @@ import time
 
 ###
 timelist = ["8:00","23:00"]
-timeinterval = 1
+timeinterval = 0.5
 codelist = ['RB.SHF','I.DCE','J.DCE']
 #codelist = ['RB.SHF']
 bigline = 200

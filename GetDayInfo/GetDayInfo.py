@@ -4,9 +4,9 @@ from WindPy import w
 from Functions import *
 import time
 
-timelist = ["9:00","11:30","15:00","17:30","21:00","23:30"]
+timelist = ["9:00","11:30","15:00","17:30","21:00","23:59"]
 timeinterval = 0.5
-codelist = ['RB.SHF','I.DCE','J.DCE']
+codelist = ['RB.SHF','HC.SHF','I.DCE','J.DCE','JM.DCE']
 #codelist = ['RB.SHF']
 
 w.start()

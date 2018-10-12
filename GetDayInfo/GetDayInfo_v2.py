@@ -5,7 +5,7 @@ from Functions import *
 import time,gc
 
 timelist = ["9:00","11:30","15:00","17:30","21:00","23:59"]
-timeinterval = 0.5
+timeinterval = 0.1
 codelist = ['RB.SHF','HC.SHF','I.DCE','J.DCE','JM.DCE']
 #codelist = ['RB.SHF']
 

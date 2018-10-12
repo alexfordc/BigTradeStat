@@ -36,32 +36,31 @@ def WriteTick(codelist,tradedata):
             csvfile.close()
 
 def WriteTick2(codelist,tradedata):
-    if tradedata == {}:
-        exit()
-    today = datetime.now().strftime('%Y%m%d')
-    for i in range(len(codelist)):
-        codename = codelist[i]
-        filename = codename+'_'+today+'.csv'
-        if os.path.isfile(filename):
-            tempfile = open(filename, 'r')
-            reader = csv.reader(tempfile)
-            lastline = list(reader)[-1]
-            tempfile.close()
-            if (lastline != strlist(tradedata[i])):
-                csvfile = open(filename, 'a', newline='')
+    if tradedata != {}:
+        today = datetime.now().strftime('%Y%m%d')
+        for i in range(len(codelist)):
+            codename = codelist[i]
+            filename = codename+'_'+today+'.csv'
+            if os.path.isfile(filename):
+                tempfile = open(filename, 'r')
+                reader = csv.reader(tempfile)
+                lastline = list(reader)[-1]
+                tempfile.close()
+                if (lastline != strlist(tradedata[i])):
+                    csvfile = open(filename, 'a', newline='')
+                    writeCSV = csv.writer(csvfile)
+                    writeCSV.writerow(strlist(tradedata[i]))
+                    print(codename,strlist(tradedata[i]))
+                    csvfile.close()
+                else:
+                    print('重复数据:',codename,strlist(tradedata[i]))
+            else:
+                csvfile = open(filename, 'w', newline='')
                 writeCSV = csv.writer(csvfile)
+                writeCSV.writerow(["Date","Time","LastPX","Last_Vol","OI_Change","Nature"])
                 writeCSV.writerow(strlist(tradedata[i]))
                 print(codename,strlist(tradedata[i]))
                 csvfile.close()
-            else:
-                print('重复数据:',codename,strlist(tradedata[i]))
-        else:
-            csvfile = open(filename, 'w', newline='')
-            writeCSV = csv.writer(csvfile)
-            writeCSV.writerow(["Date","Time","LastPX","Last_Vol","OI_Change","Nature"])
-            writeCSV.writerow(strlist(tradedata[i]))
-            print(codename,strlist(tradedata[i]))
-            csvfile.close()
 
 
 
@@ -101,12 +100,12 @@ def ReadTradeInfo2(codelist):
         naturelist = tradeinfo[5]
         for i in range(len(codelist)):
             #tradecode = codelist[i]
-            tradedate = datelist[i]
-            tradetime = timelist[i]
+            tradedate = str(datelist[i]).split('.')[0]
+            tradetime = str(timelist[i]).split('.')[0]
             tradelast = lastlist[i]
             tradevol = vollist[i]
             tradeoi = oilist[i]
-            tradenature = naturelist[i]
+            tradenature = int(naturelist[i])
             #print(tradedate,tradetime,tradelast,tradevol,tradeoi,tradenature)
             tradedata[i] = [tradedate,tradetime,tradelast,tradevol,tradeoi,tradenature]
     return tradedata
@@ -134,7 +133,7 @@ def CheckTime(timelist):
     timelist2 = TransTimeList(timelist)
     nowtime = datetime.now()
     if nowtime > timelist2[-1]:     #默认时间列表中最后一个应为收盘时间点
-        print(u"现在时间%r,已过结束时间%r" % (nowtime.strftime("%H:%M:%S"),timelist2[-1].strftime("%H:%M:%S")))
+        print(u"现在时间%s,已过结束时间%s" % (nowtime.strftime("%H:%M:%S"),timelist2[-1].strftime("%H:%M:%S")))
         return False
     else:
         return True
@@ -144,7 +143,7 @@ def CalcInterval(initinterval,timelist):
     timelist2 = TransTimeList(timelist)
     nowtime = datetime.now()
     if nowtime < timelist2[0]:  #当前时间还未到最早开盘时间，时间间隔为两者时间差秒数与1秒的最大值。（避免差0.*秒到开盘时间，时间差秒数为0的情况）
-        print(("尚未开盘，当前时间：%r，开盘时间：%r，等待……") % (nowtime.strftime('%H:%M:%S'),timelist2[0].strftime('%H:%M:%S')))
+        print(("尚未开盘，当前时间：%s，开盘时间：%s，等待……") % (nowtime.strftime('%H:%M:%S'),timelist2[0].strftime('%H:%M:%S')))
         interval = max((timelist2[0]-nowtime).seconds,initinterval)
     else:
         for i in range(0, int(len(timelist2)/2)):   #以（开始-结束）时间对为索引
@@ -152,7 +151,7 @@ def CalcInterval(initinterval,timelist):
                 interval = initinterval
                 break
             elif (timelist2[2*i+1] < nowtime) and (nowtime < timelist2[2*i+2]): #在两个交易时间段之间时，时间间隔为当前时间与后一个开盘时间的时间差秒数与1秒的最大值
-                print(("日中休盘，当前时间：%r，开盘时间：%r，等待……") % (nowtime.strftime('%H:%M:%S'), timelist2[2*i+2].strftime('%H:%M:%S')))
+                print(("日中休盘，当前时间：%s，开盘时间：%s，等待……") % (nowtime.strftime('%H:%M:%S'), timelist2[2*i+2].strftime('%H:%M:%S')))
                 interval = max((timelist2[2*i+2]-nowtime).seconds,initinterval)
                 break
     return interval

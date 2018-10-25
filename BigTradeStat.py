@@ -7,24 +7,55 @@ from WriteFunc import *
 import time
 
 #####################
-timelist = ["8:00","23:59"]
-timeinterval = 0.5
-codelist = ['RB.SHF','I.DCE','J.DCE']
-#codelist = ['RB.SHF']
-bigline = [200]     #手动指定大单标准线
+#codelist = ['RB.SHF','I.DCE','J.DCE']
+code = 'RB.SHF'
+bigline = 2000     #手动指定大单标准线
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
 #####################
+df = {}
+df2 = {}
 
-tradedata = ReadOldTradeInfo(codelist)    #读取之前的交易数据,{index:dataframe}
-#print(tradedata)
-w.start()
-while CheckTime(timelist):  #检查是否在交易时间段内
-    interval = CalcInterval(timeinterval, timelist)    #返回读取当天交易数据的时间间隔
-    time.sleep(interval)    #暂停时间间隔后再进行操作
-    livetradedata = ReadTradeInfo(codelist)  #获取各品种的实时交易数据
-    tradedata = WriteTickMergeData(codelist,livetradedata,tradedata)   #保存实时交易数据,并与以往数据合并
-    # 合并数据
-    #ratiodata = StatBigTrade(codelist,bigline,livetradedata)
-    #计算实时大单比例
+df[code] = ReadTradeInfo(code)    #读取之前的交易数据,{index:dataframe}
+column_vol_sum = df[code].iloc[:,4].sum()
+print(code,column_vol_sum)
+df2[code] = df[code].loc[df[code]['rt_last_vol'] > bigline]
+
+grouped = df2[code].groupby('rt_nature').sum()
+print(grouped)
+amt1 = grouped.ix[1].rt_last_vol
+print(amt1)
+print(amt1/column_vol_sum)
+
+
+
+#codes = ','.join(codelist)
+#rt_date = {}
+#rt_time = {}
+#rt_last = {}
+#rt_last_vol = {}
+#rt_nature = {}
+#codefile = {}
+#
+#for item in codelist:
+#    rt_date[item] = ''
+#    rt_time[item] = ''
+#    rt_last[item] = ''
+#    rt_last_vol[item] = ''
+#    rt_nature[item] = 0
+    #filename = item+".csv"
+    #if os.path.isfile(filename):
+    #    codefile[item] = open(filename, 'a')
+    #else:
+    #    codefile[item] = open(filename, 'a')
+    #    print('rt_date','rt_time','rt_last','rt_last_vol','rt_nature',sep=',',file=codefile[item])
+    #    codefile[item].flush()
+#def test(indata):
+    #print(indata)
+    #return(indata.Codes)
+
+#w.start()
+#tradeinfo = w.wsq(codes, "rt_date,rt_time,rt_last,rt_last_vol,rt_nature",func=test)
+#print(tradeinfo)
     #实时绘图
-w.stop()
+#w.stop()
+#  w.cancelRequest(0)

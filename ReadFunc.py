@@ -48,7 +48,7 @@ def ReadTradeInfo(code):
     # 读取各品种以往数据
     datalist = []
     for j in range(len(codefiles)):
-        data = pd.read_csv(codefiles[j],encoding='gb2312',dtype={'code':str,'rt_date':str,'rt_time':str,'rt_last':np.float64, 'rt_last_vol':np.float64, 'rt_nature':np.int32})
+        data = pd.read_csv(codefiles[j],encoding='gb2312',dtype={'code':str,'rt_date':str,'rt_time':str,'rt_last':np.int32,'rt_last_vol':np.int32,'rt_oi_change':np.int32,'rt_nature':np.int32})
         datalist.append(data)
     if datalist:
         oldtradeinfo = pd.concat(datalist,ignore_index=True) #合并为一个dataframe

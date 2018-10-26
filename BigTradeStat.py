@@ -19,15 +19,16 @@ bigline = 1000     #手动指定大单标准线
 #####################
 
 df = ReadTradeInfo(code)    #读取之前的交易数据,{index:dataframe}
-column_vol_sum = df[code].iloc[:,4].sum()
-print(code,column_vol_sum)
-df2[code] = df[code].loc[df[code]['rt_last_vol'] > bigline]
+print(df)
+#column_vol_sum = df[code].iloc[:,4].sum()
+#print(code,column_vol_sum)
+#df2[code] = df[code].loc[df[code]['rt_last_vol'] > bigline]
 
-grouped = df2[code].groupby('rt_nature').sum()
-print(grouped)
-amt1 = grouped.ix[1].rt_last_vol
-print(amt1)
-print(amt1/column_vol_sum)
+#grouped = df2[code].groupby('rt_nature').sum()
+#print(grouped)
+#amt1 = grouped.ix[1].rt_last_vol
+#print(amt1)
+#print(amt1/column_vol_sum)
 
 
 

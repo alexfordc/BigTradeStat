@@ -9,7 +9,7 @@ import time
 #####################
 #codelist = ['RB.SHF','I.DCE','J.DCE']
 code = 'RB.SHF'
-bigline = 2000     #手动指定大单标准线
+bigline = 1000     #手动指定大单标准线
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
 '''
 红: {2:'空平',4:'多开',6:'多换',7:'双开'}
@@ -17,10 +17,8 @@ bigline = 2000     #手动指定大单标准线
 '''
 
 #####################
-df = {}
-df2 = {}
 
-df[code] = ReadTradeInfo(code)    #读取之前的交易数据,{index:dataframe}
+df = ReadTradeInfo(code)    #读取之前的交易数据,{index:dataframe}
 column_vol_sum = df[code].iloc[:,4].sum()
 print(code,column_vol_sum)
 df2[code] = df[code].loc[df[code]['rt_last_vol'] > bigline]

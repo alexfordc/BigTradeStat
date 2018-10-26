@@ -35,7 +35,7 @@ class tradedata:
 
 # 从csv文件读取以往交易数据
 def ReadTradeInfo(code):
-    nowmon = datetime.now().strftime('%Y%m')
+    #nowmon = datetime.now().strftime('%Y%m')
     #获取各品种以往数据的文件名
     allfiles = os.listdir()
     codefiles = []

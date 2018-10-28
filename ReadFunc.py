@@ -5,15 +5,15 @@ import pandas as pd
 import numpy as np
 import os
 
-class tradedata:
-    def __init__(self,tradecode,rt_date,rt_time,rt_last,rt_last_vol,rt_oi_change,rt_nature):
-        self.name = tradecode
-        self.date = rt_date
-        self.time = rt_time
-        self.price = rt_last
-        self.pos = rt_last_vol
-        self.change = rt_oi_change
-        self.nature = rt_nature
+#class tradedata:
+#    def __init__(self,tradecode,rt_date,rt_time,rt_last,rt_last_vol,rt_oi_change,rt_nature):
+#        self.name = tradecode
+#        self.date = rt_date
+#        self.time = rt_time
+#        self.price = rt_last
+#        self.pos = rt_last_vol
+#        self.change = rt_oi_change
+#        self.nature = rt_nature
 
 # 获取实时交易数据
 #def ReadTradeInfo(codelist):

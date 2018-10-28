@@ -5,6 +5,15 @@ from datetime import datetime, date, timedelta
 import numpy as np
 import pandas as pd
 
+def sum_big_vol(dfindex, dfbig):
+    total_vol = dfindex.iloc[:, 4].sum()  # 到index为止的总交易量
+    total_oi = dfindex.iloc[:, 5].sum()  # 到index为止的总增仓量
+    big_vol = dfbig.iloc[:, 4].sum()  # 到index为止的大单总交易量
+    big_oi = dfbig.iloc[:, 5].sum()  # 到index为止的大单总增仓量
+    total = [total_vol, total_oi, big_vol, big_oi]
+    return total
+
+
 def split_big_group(dfindex, dfbig):
     vol_nature = {}
     oi_nature = {}
@@ -23,7 +32,8 @@ def split_big_group(dfindex, dfbig):
     for index, row in grouped_big.iterrows():
         big_vol_nature[index] = row.rt_last_vol
         big_oi_nature[index] = row.rt_oi_change
-    return (vol_nature,oi_nature,big_vol_nature,big_oi_nature)
+    total_nature = [vol_nature, oi_nature, big_vol_nature, big_oi_nature]
+    return total_nature
 
 
 #def sumredgreen(groupedsum):

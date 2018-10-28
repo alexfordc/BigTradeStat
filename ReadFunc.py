@@ -53,3 +53,37 @@ def ReadTradeInfo(code):
     if datalist:
         oldtradeinfo = pd.concat(datalist,ignore_index=True) #合并为一个dataframe
     return (oldtradeinfo)
+
+### 根据code名称获取csv文件列表，并区分以往文件和实时文件
+def get_files(code):
+    now = datetime.now().strftime('%Y%m%d')
+    allfiles = os.listdir()
+    codefiles = []
+    livefile = ''
+    index = -2
+    for item in allfiles:
+        if (item.split('.')[-1] == 'csv'):
+                if code in item:
+                    codefiles.append(item)
+    oldfiles = sorted(codefiles)
+    for i in range(len(oldfiles)):
+        if now in oldfiles[i]:
+            index = i
+    if index == -2:
+        index = -1
+    livefile = oldfiles[index]
+    oldfiles.remove(livefile)
+    return (oldfiles,livefile)
+
+def read_old_files(oldfiles):
+    dflist = []
+    olddf = pd.DataFrame
+    if len(oldfiles) > 0:
+        for i in range(len(oldfiles)):
+            df = pd.read_csv(oldfiles[i], encoding='gb2312',
+                               dtype={'code': str, 'rt_date': str, 'rt_time': str, 'rt_last': np.int32,
+                                      'rt_last_vol': np.int32, 'rt_oi_change': np.int32, 'rt_nature': np.int32})
+            dflist.append(df)
+        if len(dflist) > 0:
+            olddf = pd.concat(dflist, ignore_index=True)
+    return olddf

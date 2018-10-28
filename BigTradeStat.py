@@ -15,7 +15,10 @@ bigline = 1000     #手动指定大单标准线
 红: {2:'空平',4:'多开',6:'多换',7:'双开'}
 绿: {1:'空开',3:'空换',5:'多平',8:'双平'}
 '''
-output_title()
+start = datetime.now()
+now = datetime.now().strftime('%Y%m%d')
+outfile = open('test_' + now + '.csv', mode='w')
+output_title(outfile)
 #####################
 
 df = ReadTradeInfo(code)    #读取之前的交易数据,{index:dataframe}
@@ -36,9 +39,11 @@ for index, row in df.iterrows():
 
         vol_nature, oi_nature, big_vol_nature, big_oi_nature = split_big_group(dfindex, dfbig)
 
-        output(rowdate,rowtime,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
+        output1(rowdate,rowtime,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
 
-        #print(grouped.loc[grouped['rt_nature']==1,'rt_last_vol'])
+end = datetime.now()
+print('用时：',(end-start).seconds)
+#print(grouped.loc[grouped['rt_nature']==1,'rt_last_vol'])
 #column_vol_sum = df[code].iloc[:,4].sum()
 #print(code,column_vol_sum)
 #df2[code] = df[code].loc[df[code]['rt_last_vol'] > bigline]

@@ -3,16 +3,16 @@ import csv,os
 from datetime import datetime
 
 def output_title(outfile):
-    print('date', 'time', 'total_vol', 'total_oi', 'big_vol', 'big_oi', sep=',', end=',',file=outfile)
+    print('date', 'time','last_px', 'total_vol', 'total_oi', 'big_vol', 'big_oi', sep=',', end=',',file=outfile)
     for i in range(1, 8):
         print(('total_vol_%d,total_oi_%d,big_vol_%d,big_oi_%d') % (i, i, i, i), end=',',file=outfile)
     print(('total_vol_%d,total_oi_%d,big_vol_%d,big_oi_%d') % (8, 8, 8, 8),file=outfile)
     outfile.flush()
 
-def output1(rowdate,rowtime,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature):
+def output1(rowdate,rowtime,rowlastpx,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature):
     now = datetime.now().strftime('%Y%m%d')
     outfile = open('test_' + now + '.csv', mode='a')
-    print(rowdate,rowtime,total_vol,total_oi,big_vol,big_oi,sep=',',end=',')#,file=outfile)
+    print(rowdate,rowtime,rowlastpx,total_vol,total_oi,big_vol,big_oi,sep=',',end=',')#,file=outfile)
     for i in range(1,9):
         if i != 8:
             print(vol_nature[i],oi_nature[i],big_vol_nature[i],big_oi_nature[i],sep=',',end=',')#,file=outfile)
@@ -20,8 +20,8 @@ def output1(rowdate,rowtime,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nat
             print(vol_nature[i], oi_nature[i], big_vol_nature[i], big_oi_nature[i], sep=',')#,file=outfile)
             outfile.flush()
 
-def output(outfile,rowdate,rowtime,total,total_nature):
-    print(rowdate,rowtime,sep=',',end=',',file=outfile)
+def output(outfile,rowdate,rowtime,rowlastpx,total,total_nature):
+    print(rowdate,rowtime,rowlastpx,sep=',',end=',',file=outfile)
     for i in range(len(total)):
         print(total[i],end=',',file=outfile)
     for i in range(1,8):

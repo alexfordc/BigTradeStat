@@ -87,3 +87,12 @@ def read_old_files(oldfiles):
         if len(dflist) > 0:
             olddf = pd.concat(dflist, ignore_index=True)
     return olddf
+
+def read_live_file(livefile,num):
+    templine = []
+    for i in range(1, num + 1):
+        templine.append(i)
+    livedf = pd.read_csv(livefile, encoding='gb2312',skiprows=tuple(templine),
+                               dtype={'code': str, 'rt_date': str, 'rt_time': str, 'rt_last': np.int32,
+                                      'rt_last_vol': np.int32, 'rt_oi_change': np.int32, 'rt_nature': np.int32})
+    return livedf

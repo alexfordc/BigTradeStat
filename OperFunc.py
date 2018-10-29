@@ -5,16 +5,24 @@ from datetime import datetime, date, timedelta
 import numpy as np
 import pandas as pd
 
-def sum_big_vol(dfindex, dfbig):
-    total_vol = dfindex.iloc[:, 4].sum()  # 到index为止的总交易量
-    total_oi = dfindex.iloc[:, 5].sum()  # 到index为止的总增仓量
+def sum_big_vol(df, dfbig):
+    total_vol = df.iloc[:, 4].sum()  # 到index为止的总交易量
+    total_oi = df.iloc[:, 5].sum()  # 到index为止的总增仓量
     big_vol = dfbig.iloc[:, 4].sum()  # 到index为止的大单总交易量
     big_oi = dfbig.iloc[:, 5].sum()  # 到index为止的大单总增仓量
     total = [total_vol, total_oi, big_vol, big_oi]
     return total
 
+def live_sum_big_vol(df, dfbig,total):
+    total_vol = total[0] + df.iloc[:, 4].sum()  # 到index为止的总交易量
+    total_oi = total[1] + df.iloc[:, 5].sum()  # 到index为止的总增仓量
+    big_vol = total[2] + dfbig.iloc[:, 4].sum()  # 到index为止的大单总交易量
+    big_oi = total[3] + dfbig.iloc[:, 5].sum()  # 到index为止的大单总增仓量
+    live_total = [total_vol, total_oi, big_vol, big_oi]
+    return live_total
 
-def split_big_group(dfindex, dfbig):
+
+def split_big_group(df, dfbig):
     vol_nature = {}
     oi_nature = {}
     big_vol_nature = {}
@@ -24,7 +32,7 @@ def split_big_group(dfindex, dfbig):
         oi_nature[i] = 0
         big_vol_nature[i] = 0
         big_oi_nature[i] = 0
-    grouped = dfindex.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
+    grouped = df.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
     grouped_big = dfbig.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
     for index, row in grouped.iterrows():
         vol_nature[index] = row.rt_last_vol
@@ -35,6 +43,26 @@ def split_big_group(dfindex, dfbig):
     total_nature = [vol_nature, oi_nature, big_vol_nature, big_oi_nature]
     return total_nature
 
+def live_split_big_group(df, dfbig,total_nature):
+    vol_nature = {}
+    oi_nature = {}
+    big_vol_nature = {}
+    big_oi_nature = {}
+    for i in range(1,9):
+        vol_nature[i] = total_nature[0][i]
+        oi_nature[i] = total_nature[1][i]
+        big_vol_nature[i] = total_nature[2][i]
+        big_oi_nature[i] = total_nature[3][i]
+    grouped = df.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
+    grouped_big = dfbig.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
+    for index, row in grouped.iterrows():
+        vol_nature[index] += row.rt_last_vol
+        oi_nature[index] += row.rt_oi_change
+    for index, row in grouped_big.iterrows():
+        big_vol_nature[index] += row.rt_last_vol
+        big_oi_nature[index] += row.rt_oi_change
+    live_total_nature = [vol_nature, oi_nature, big_vol_nature, big_oi_nature]
+    return live_total_nature
 
 #def sumredgreen(groupedsum):
 #    vol_red = 0

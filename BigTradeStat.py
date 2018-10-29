@@ -28,6 +28,7 @@ for index, row in df.iterrows():
     if index >= 10230:
         rowdate = row.rt_date
         rowtime = row.rt_time
+        rowlastpx = row.rt_last
         dfindex = df[:index+1]  #切片获取到index为止的数据
         dfbig = df[:index+1].loc[dfindex['rt_last_vol'] >= bigline]
         #print(dfindex)
@@ -39,7 +40,7 @@ for index, row in df.iterrows():
 
         vol_nature, oi_nature, big_vol_nature, big_oi_nature = split_big_group(dfindex, dfbig)
 
-        output1(rowdate,rowtime,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
+        output1(rowdate,rowtime,rowlastpx,total_vol,total_oi,big_vol,big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
 
 end = datetime.now()
 print('用时：',(end-start).seconds)

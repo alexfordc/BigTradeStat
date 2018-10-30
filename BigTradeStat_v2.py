@@ -51,15 +51,14 @@ if len(oldfiles) > 0:
 else:
     print('无以往数据 或 仅有一个数据文件')
 
-#livefile = '../GetDayTradeInfo/RB.SHF_20181029.csv'
+livefile = '../GetDayTradeInfo/RB.SHF_20181029.csv'
 
 print(total,total_nature)
 
 num = 0
 iii = 0
-while iii < 3:
+while iii < 5:
     livedf = read_live_file(livefile,num)
-    #print(livedf)
     #num += 5
     iii += 1
     print('-'*20)
@@ -82,6 +81,7 @@ while iii < 3:
     end3 = datetime.now()
     print('统计实时数据结束：', end3.strftime('%Y-%m-%d %H:%M:%S'))
     print('统计实时数据用时：', (end3 - end2).seconds, '秒')
+    time.sleep(10)
 
 print('总结束：',end3.strftime('%Y-%m-%d %H:%M:%S'))
 print('总用时：',(end3-start).seconds,'秒')

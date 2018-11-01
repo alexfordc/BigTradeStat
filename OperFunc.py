@@ -4,6 +4,23 @@ from datetime import datetime, date, timedelta
 #import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from datetime import datetime
+
+def tradeday():
+    now = datetime.now()
+    today = now.strftime('%Y%m%d')
+    endtime = datetime.strptime((today + ' 15:30:00'), '%Y%m%d %H:%M:%S')
+    newdaytime = datetime.strptime((today + ' 20:30:00'), '%Y%m%d %H:%M:%S')
+    if (now < endtime):
+        datestr = today
+    elif (now > newdaytime):
+        if ticktime.weekday() == 4:
+            datestr = (ticktime + timedelta(days=3)).strftime('%Y%m%d')
+        else:
+            datestr = (ticktime + timedelta(days=1)).strftime('%Y%m%d')
+    else:
+        datestr = 'none'
+
 
 def sum_big_vol(df, dfbig):
     total_vol = df.iloc[:, 4].sum()  # 到index为止的总交易量

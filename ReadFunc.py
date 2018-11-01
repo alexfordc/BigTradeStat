@@ -75,6 +75,36 @@ def get_files(code):
     oldfiles.remove(livefile)
     return (oldfiles,livefile)
 
+def get_filelist(code):
+    allfiles = os.listdir()
+    codefiles = []
+    for item in allfiles:
+        if (item.split('.')[-1] == 'csv'):
+                if code in item:
+                    codefiles.append(item)
+    codefiles = sorted(codefiles)
+    return codefiles
+
+def read_files(datafiles):
+    dflist = []
+    dfs = pd.DataFrame
+    if len(datafiles) > 0:
+        for i in range(len(datafiles)):
+            dfdate = datafiles[i].split('_')[1].split('.')[0]
+            df = pd.read_csv(datafiles[i], encoding='gb2312', usecols= (0,1,3,5,6),
+                               dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
+                                      '性质': str})
+            for index, row in df.iterrows():
+                if row.时间 > '20:00:00':
+                    df.iloc[index,0] = row.时间
+                else:
+                    df.iloc[index, 0] = dfdate + '_' + row.时间
+            dflist.append(df)
+        if len(dflist) > 0:
+            dfs = pd.concat(dflist, ignore_index=True)
+    return  dfs
+
+
 def read_old_files(oldfiles):
     dflist = []
     olddf = pd.DataFrame

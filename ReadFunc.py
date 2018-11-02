@@ -1,6 +1,6 @@
 # conding=utf-8
 from WindPy import w
-from datetime import datetime
+from datetime import datetime,timedelta
 import pandas as pd
 import numpy as np
 import os
@@ -85,21 +85,28 @@ def get_filelist(code):
     codefiles = sorted(codefiles)
     return codefiles
 
+def get_yesterday(dfdate):
+    today = datetime.strptime(dfdate,'%Y%m%d')
+    yesterday = (today - timedelta(days=1)).strftime('%Y%m%d')
+    return yesterday
+
 def read_files(datafiles):
     dflist = []
     dfs = pd.DataFrame
     if len(datafiles) > 0:
         for i in range(len(datafiles)):
             dfdate = datafiles[i].split('_')[1].split('.')[0]
+            yesterday = get_yesterday(dfdate)
             df = pd.read_csv(datafiles[i], encoding='gb2312', usecols= (0,1,3,5,6),
                                dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
                                       '性质': str})
             for index, row in df.iterrows():
-                if row.时间 > '20:00:00':
-                    df.iloc[index,0] = row.时间
+                if (datetime.strptime(row.时间,'%H:%M:%S') > datetime.strptime('20:00:00','%H:%M:%S')) or (datetime.strptime(row.时间,'%H:%M:%S') < datetime.strptime('8:00:00','%H:%M:%S')):
+                    df.iloc[index,0] = yesterday + '_' + row.时间
                 else:
                     df.iloc[index, 0] = dfdate + '_' + row.时间
             dflist.append(df)
+            print('读取文件%r',datafiles[i])
         if len(dflist) > 0:
             dfs = pd.concat(dflist, ignore_index=True)
     return  dfs

@@ -20,7 +20,7 @@ bigline = 1000     #手动指定大单标准线
 total = []
 total_nature = []
 today = datetime.now().strftime('%Y%m%d')
-filename = 'test_' + today + '.csv'
+#filename = 'test_' + today + '.csv'
 
 #outfile = open(filename, mode='w')
 #output_title(outfile)
@@ -29,10 +29,11 @@ filename = 'test_' + today + '.csv'
 #print('开始：',start.strftime('%Y-%m-%d %H:%M:%S'))
 datafiles = get_filelist(code)
 dfs = read_files(datafiles)
-for index, row in dfs.iterrows():
-    rowtime = row.时间
-    rowlastpx = row.价格
-    print(rowtime)
+print(dfs['时间'])
+#for index, row in dfs.iterrows():
+#    rowtime = row.时间
+#    rowlastpx = row.价格
+#    print(rowtime)
 
     #print(rowtime)
 

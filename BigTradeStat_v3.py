@@ -28,8 +28,11 @@ today = datetime.now().strftime('%Y%m%d')
 #start = datetime.now()
 #print('开始：',start.strftime('%Y-%m-%d %H:%M:%S'))
 datafiles = get_filelist(code)
+print(datafiles)
 dfs = read_files(datafiles)
-print(dfs['时间'])
+#print(dfs)
+
+#print(dfs['时间'])
 #for index, row in dfs.iterrows():
 #    rowtime = row.时间
 #    rowlastpx = row.价格

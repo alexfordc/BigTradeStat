@@ -95,18 +95,21 @@ def read_files(datafiles):
     dfs = pd.DataFrame
     if len(datafiles) > 0:
         for i in range(len(datafiles)):
+            start = datetime.now()
             dfdate = datafiles[i].split('_')[1].split('.')[0]
             yesterday = get_yesterday(dfdate)
             df = pd.read_csv(datafiles[i], encoding='gb2312', usecols= (0,1,3,5,6),
                                dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
                                       '性质': str})
             for index, row in df.iterrows():
-                if (datetime.strptime(row.时间,'%H:%M:%S') > datetime.strptime('20:00:00','%H:%M:%S')) or (datetime.strptime(row.时间,'%H:%M:%S') < datetime.strptime('8:00:00','%H:%M:%S')):
+                if datetime.strptime(row.时间,'%H:%M:%S') > datetime.strptime('20:00:00','%H:%M:%S'):
                     df.iloc[index,0] = yesterday + '_' + row.时间
                 else:
                     df.iloc[index, 0] = dfdate + '_' + row.时间
             dflist.append(df)
-            print('读取文件%r',datafiles[i])
+            end = datetime.now()
+            print('已读取文件%r,共%d行，用时%d秒' % (datafiles[i],len(df.index),(end-start).seconds))
+            del df
         if len(dflist) > 0:
             dfs = pd.concat(dflist, ignore_index=True)
     return  dfs

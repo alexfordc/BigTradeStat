@@ -32,13 +32,7 @@ print(datafiles)
 dfs = read_files(datafiles)
 #print(dfs)
 
-#print(dfs['时间'])
-#for index, row in dfs.iterrows():
-#    rowtime = row.时间
-#    rowlastpx = row.价格
-#    print(rowtime)
-
-    #print(rowtime)
+stat_data(dfs,bigline)
 
 
 #oldfiles, livefile = get_files(code)        #默认当前日期或最后一个文件为正在更新的数据文件

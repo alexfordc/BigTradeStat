@@ -23,12 +23,16 @@ def tradeday():
 
 
 def sum_big_vol(df, dfbig):
-    total_vol = df.iloc[:, 4].sum()  # 到index为止的总交易量
-    total_oi = df.iloc[:, 5].sum()  # 到index为止的总增仓量
-    big_vol = dfbig.iloc[:, 4].sum()  # 到index为止的大单总交易量
-    big_oi = dfbig.iloc[:, 5].sum()  # 到index为止的大单总增仓量
-    total = [total_vol, total_oi, big_vol, big_oi]
-    return total
+    #total_vol = df.iloc[:, 4].sum()  # 到index为止的总交易量
+    #total_oi = df.iloc[:, 5].sum()  # 到index为止的总增仓量
+    #big_vol = dfbig.iloc[:, 4].sum()  # 到index为止的大单总交易量
+    #big_oi = dfbig.iloc[:, 5].sum()  # 到index为止的大单总增仓量
+    total_vol = df.iloc[:, 2].sum()  # 到index为止的总交易量
+    total_oi = df.iloc[:, 3].sum()  # 到index为止的总增仓量
+    big_vol = dfbig.iloc[:, 2].sum()  # 到index为止的大单总交易量
+    big_oi = dfbig.iloc[:, 3].sum()  # 到index为止的大单总增仓量
+    #total = [total_vol, total_oi, big_vol, big_oi]
+    return (total_vol, total_oi, big_vol, big_oi)
 
 def live_sum_big_vol(df, dfbig,total):
     total_vol = total[0] + df.iloc[:, 4].sum()  # 到index为止的总交易量
@@ -44,21 +48,24 @@ def split_big_group(df, dfbig):
     oi_nature = {}
     big_vol_nature = {}
     big_oi_nature = {}
-    for i in range(1,9):
+    for i in ['空平','多开','多换','双开','空开','空换','多平','双平']:
         vol_nature[i] = 0
         oi_nature[i] = 0
         big_vol_nature[i] = 0
         big_oi_nature[i] = 0
-    grouped = df.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
-    grouped_big = dfbig.groupby('rt_nature')['rt_last_vol', 'rt_oi_change'].sum()  # 根据性质分组并求和
+    grouped = df.groupby('性质')['现手', '增仓'].sum()  # 根据性质分组并求和
+    grouped_big = dfbig.groupby('性质')['现手', '增仓'].sum()  # 根据性质分组并求和
+    #print(grouped)
+    #print(grouped_big)
     for index, row in grouped.iterrows():
-        vol_nature[index] = row.rt_last_vol
-        oi_nature[index] = row.rt_oi_change
+        vol_nature[index] = row.现手
+        oi_nature[index] = row.增仓
     for index, row in grouped_big.iterrows():
-        big_vol_nature[index] = row.rt_last_vol
-        big_oi_nature[index] = row.rt_oi_change
-    total_nature = [vol_nature, oi_nature, big_vol_nature, big_oi_nature]
-    return total_nature
+        big_vol_nature[index] = row.现手
+        big_oi_nature[index] = row.增仓
+    #total_nature = [vol_nature, oi_nature, big_vol_nature, big_oi_nature]
+    #return total_nature
+    return (vol_nature, oi_nature, big_vol_nature, big_oi_nature)
 
 def live_split_big_group(df, dfbig,total_nature):
     vol_nature = {}
@@ -80,6 +87,16 @@ def live_split_big_group(df, dfbig,total_nature):
         big_oi_nature[index] += row.rt_oi_change
     live_total_nature = [vol_nature, oi_nature, big_vol_nature, big_oi_nature]
     return live_total_nature
+
+def stat_data(dfs,bigline):
+    for index, row in dfs.iterrows():
+        rowtime = row.时间
+        rowlastpx = row.价格
+        df = dfs[:index + 1]  # 切片获取到index为止的所有数据
+        dfbig = dfs[:index + 1].loc[df['现手'] >= bigline]  # 切片获取到index为止的大单数据
+        total_vol, total_oi, big_vol, big_oi = sum_big_vol(df, dfbig)
+        vol_nature, oi_nature, big_vol_nature, big_oi_nature = split_big_group(df, dfbig)
+        print(rowtime,rowlastpx,total_vol, total_oi, big_vol, big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
 
 #def sumredgreen(groupedsum):
 #    vol_red = 0

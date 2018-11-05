@@ -1,7 +1,7 @@
 # conding=utf-8
 from datetime import datetime, date, timedelta
 #import xlrd,time,os, operator, calendar
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from datetime import datetime
@@ -89,6 +89,20 @@ def live_split_big_group(df, dfbig,total_nature):
     return live_total_nature
 
 def stat_data(dfs,bigline):
+    naturelist = ['多开','空平','空开','多平','双开','多换','双平','空换']
+    today = datetime.now().strftime('%Y%m%d')
+    filename = 'Stated_Records_' + today + '_' + str(bigline) + '.csv'
+    file = open(filename,mode='w')
+    print('时间', '最新价', '总量', '增仓', '大单总量', '大单增仓', sep=',', end=',', file=file)
+    for i in range(len(naturelist)):
+        print(naturelist[i]+'总量', end=',', file=file)
+        print(naturelist[i]+'增仓', end=',', file=file)
+        print(naturelist[i]+'大单总量', end=',', file=file)
+        if (i != (len(naturelist) - 1)):
+            print(naturelist[i]+'大单增仓', end=',', file=file)
+        else:
+            print(naturelist[i]+'大单增仓', file=file)
+    start = datetime.now()
     for index, row in dfs.iterrows():
         rowtime = row.时间
         rowlastpx = row.价格
@@ -96,7 +110,49 @@ def stat_data(dfs,bigline):
         dfbig = dfs[:index + 1].loc[df['现手'] >= bigline]  # 切片获取到index为止的大单数据
         total_vol, total_oi, big_vol, big_oi = sum_big_vol(df, dfbig)
         vol_nature, oi_nature, big_vol_nature, big_oi_nature = split_big_group(df, dfbig)
-        print(rowtime,rowlastpx,total_vol, total_oi, big_vol, big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
+        #print(rowtime,rowlastpx,total_vol, total_oi, big_vol, big_oi,vol_nature, oi_nature, big_vol_nature, big_oi_nature)
+        #print('%s: 最新价:%4d,总量:%6d,增仓:%6d,大单总量:%6d,大单增仓:%6d' % (rowtime,rowlastpx,total_vol, total_oi, big_vol, big_oi))
+        print(rowtime,rowlastpx,total_vol, total_oi, big_vol, big_oi,sep=',',end=',',file=file)
+        for i in range(len(naturelist)):
+            print(vol_nature[naturelist[i]],end=',',file=file)
+            print(oi_nature[naturelist[i]],end=',',file=file)
+            print(big_vol_nature[naturelist[i]],end=',',file=file)
+            if (i != (len(naturelist) - 1)):
+                print(big_oi_nature[naturelist[i]],end=',',file=file)
+            else:
+                print(big_oi_nature[naturelist[i]], file=file)
+        if index % 1000 == 0:
+            file.flush()
+    file.close()
+    end = datetime.now()
+    print(('大单线:%d,已统计%d行数据,用时%d秒') % (bigline,len(dfs.index),(end-start).seconds))
+    return filename
+
+def plot_data(filename):
+    start = datetime.now()
+    rtdatetime = np.loadtxt(filename, delimiter=',', dtype=str, usecols=(0), skiprows=1)
+    last_px,total_vol,total_oi,big_vol,big_oi = np.loadtxt(filename, delimiter=',', dtype=int, usecols=(1,2,3,4,5), unpack=True, skiprows=1)
+    total_vol_duokai,total_vol_kongping = np.loadtxt(filename, delimiter=',', dtype=int, usecols=(6,10), unpack=True, skiprows=1)
+    total_vol_kongkai,total_vol_duoping = np.loadtxt(filename, delimiter=',', dtype=int, usecols=(14,18), unpack=True, skiprows=1)
+    total_vol_duo = total_vol_duokai + total_vol_kongping
+    total_vol_kong = total_vol_kongkai + total_vol_duoping
+    big_vol_duokai,big_vol_kongping = np.loadtxt(filename, delimiter=',', dtype=int, usecols=(8,12), unpack=True, skiprows=1)
+    big_vol_kongkai,big_vol_duoping = np.loadtxt(filename, delimiter=',', dtype=int, usecols=(16,20), unpack=True, skiprows=1)
+    big_vol_duo = big_vol_duokai + big_vol_kongping
+    big_vol_kong = big_vol_kongkai + big_vol_duoping
+    end = datetime.now()
+    print(('读取统计后文件用时%d秒') % (end - start).seconds)
+
+    datetimelist = rtdatetime.tolist()
+    xticks = list(range(0, len(datetimelist), int(len(datetimelist)/50)))
+    xlabels = [datetimelist[x] for x in xticks]
+    plt.xticks(xticks,xlabels,rotation=90)
+    plt.plot(last_px, color='black', label='Live Price')
+    plt.plot(total_vol, color='blue', label='Total Vol')
+    plt.plot(big_vol_duo, color='red', label='Big: Make Duo')
+    plt.plot(big_vol_kong, color='green', label='Big: Make Kong')
+    plt.legend()
+    plt.show()
 
 #def sumredgreen(groupedsum):
 #    vol_red = 0

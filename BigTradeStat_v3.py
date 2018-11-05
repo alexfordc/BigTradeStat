@@ -16,10 +16,11 @@ import matplotlib.pyplot as plt
 #codelist = ['RB.SHF','I.DCE','J.DCE']
 code = 'RB.SHF'
 bigline = 1000     #手动指定大单标准线
+#biglines = [1000]
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
-total = []
-total_nature = []
-today = datetime.now().strftime('%Y%m%d')
+#total = []
+#total_nature = []
+#today = datetime.now().strftime('%Y%m%d')
 #filename = 'test_' + today + '.csv'
 
 #outfile = open(filename, mode='w')
@@ -28,11 +29,13 @@ today = datetime.now().strftime('%Y%m%d')
 #start = datetime.now()
 #print('开始：',start.strftime('%Y-%m-%d %H:%M:%S'))
 datafiles = get_filelist(code)
-print(datafiles)
-dfs = read_files(datafiles)
-#print(dfs)
+#dfs = read_files(datafiles)
+#for i in range(len(biglines)):
+#    bigline = biglines[i]
+#stat_file = stat_data(dfs,bigline)
+stat_file = 'Stated_Records_20181105_1000.csv'
+plot_data(stat_file)
 
-stat_data(dfs,bigline)
 
 
 #oldfiles, livefile = get_files(code)        #默认当前日期或最后一个文件为正在更新的数据文件

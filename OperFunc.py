@@ -5,6 +5,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from datetime import datetime
+import sys
+
+def report_progress(progress, total, start, end):
+    ratio = progress / float(total)
+    percentage = round(ratio * 100)
+    length = 80
+    percentnums = round(length*ratio)
+    sec = (end-start).seconds
+    buf = '\r[%s%s] %d%% (%d Seconds)' % (('#'*percentnums),('-'*(length-percentnums)), percentage,sec)
+    sys.stdout.write(buf)
+    sys.stdout.flush()
+def report_progress_done():
+    sys.stdout.write('\n')
+
+
 
 def tradeday():
     now = datetime.now()
@@ -90,6 +105,7 @@ def live_split_big_group(df, dfbig,total_nature):
 
 def stat_data(dfs,bigline):
     naturelist = ['多开','空平','空开','多平','双开','多换','双平','空换']
+    max_step = len(dfs.index)
     today = datetime.now().strftime('%Y%m%d')
     filename = 'Stated_Records_' + today + '_' + str(bigline) + '.csv'
     file = open(filename,mode='w')
@@ -103,6 +119,7 @@ def stat_data(dfs,bigline):
         else:
             print(naturelist[i]+'大单增仓', file=file)
     start = datetime.now()
+    print('逐条统计数据, 共%d行:' % len(dfs.index))
     for index, row in dfs.iterrows():
         rowtime = row.时间
         rowlastpx = row.价格
@@ -123,9 +140,12 @@ def stat_data(dfs,bigline):
                 print(big_oi_nature[naturelist[i]], file=file)
         if index % 1000 == 0:
             file.flush()
+        end = datetime.now()
+        report_progress(index, len(dfs.index), start, end)
+    report_progress_done()
     file.close()
-    end = datetime.now()
-    print(('大单线:%d,已统计%d行数据,用时%d秒') % (bigline,len(dfs.index),(end-start).seconds))
+    #end = datetime.now()
+    #print(('大单线:%d,已统计%d行数据,用时%d秒') % (bigline,len(dfs.index),(end-start).seconds))
     return filename
 
 def plot_data(filename):
@@ -150,7 +170,7 @@ def plot_data(filename):
     plt.plot(last_px, color='black', label='Live Price')
     plt.plot(total_vol, color='blue', label='Total Vol')
     plt.plot(big_vol_duo, color='red', label='Big: Make Duo')
-    plt.plot(big_vol_kong, color='green', label='Big: Make Kong')
+    plt.plot(big_vol_kong , color='green', label='Big: Make Kong')
     plt.legend()
     plt.show()
 

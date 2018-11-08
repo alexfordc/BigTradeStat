@@ -29,12 +29,14 @@ bigline = 1000     #手动指定大单标准线
 #start = datetime.now()
 #print('开始：',start.strftime('%Y-%m-%d %H:%M:%S'))
 datafiles = get_filelist(code)
-dfs = read_files(datafiles)
+#dfs = read_files(datafiles)
+#stat_file = stat_data(dfs,bigline)
+stat_file = 'Stated_Records_20181108_1000.csv'
+#plot_data(stat_file)
+
 #for i in range(len(biglines)):
 #    bigline = biglines[i]
-stat_file = stat_data(dfs,bigline)
-#stat_file = 'Stated_Records_20181105_1000.csv'
-#plot_data(stat_file)
+
 
 
 

@@ -95,7 +95,7 @@ def get_filelist(code):
                 if code in item:
                     codefiles.append(item)
     codefiles = sorted(codefiles)
-    print('读取文件: %s' % (', '.join(codefiles)))
+    print('文件列表: %s' % (', '.join(codefiles)))
     return codefiles
 
 def get_yesterday(dfdate):

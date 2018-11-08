@@ -105,7 +105,7 @@ def live_split_big_group(df, dfbig,total_nature):
 
 def stat_data(dfs,bigline):
     naturelist = ['多开','空平','空开','多平','双开','多换','双平','空换']
-    max_step = len(dfs.index)
+    max1_step = len(dfs.index)
     today = datetime.now().strftime('%Y%m%d')
     filename = 'Stated_Records_' + today + '_' + str(bigline) + '.csv'
     file = open(filename,mode='w')
@@ -164,14 +164,37 @@ def plot_data(filename):
     print(('读取统计后文件用时%d秒') % (end - start).seconds)
 
     datetimelist = rtdatetime.tolist()
-    xticks = list(range(0, len(datetimelist), int(len(datetimelist)/50)))
+    xticks = list(range(0, len(datetimelist), int(len(datetimelist)/25)))
     xlabels = [datetimelist[x] for x in xticks]
-    plt.xticks(xticks,xlabels,rotation=90)
-    plt.plot(last_px, color='black', label='Live Price')
-    plt.plot(total_vol, color='blue', label='Total Vol')
-    plt.plot(big_vol_duo, color='red', label='Big: Make Duo')
-    plt.plot(big_vol_kong , color='green', label='Big: Make Kong')
-    plt.legend()
+    #plt.xticks(xticks,xlabels,rotation=90)
+
+    fig, (ax1_left,ax2_left) = plt.subplots(2,1,sharex=True)
+    ax1_left.set_ylabel('Live Price', color='blue')
+    ax1_left.plot(rtdatetime,last_px, color='blue', label='Live Price')
+    ax1_left.tick_params(axis='y', colors='blue')
+
+    ax1_right = ax1_left.twinx()
+    ax1_right.set_ylabel('Total Vol', color='black')
+    ax1_right.plot(rtdatetime,total_vol, color='black', label='Total Vol')
+    ax1_right.tick_params(axis='y', colors='black')
+
+    ax2_left.set_xlabel('Time')
+    #ax2_left.set_ylabel('Duo', color='red')
+    ax2_left.plot(rtdatetime,big_vol_duo, color='red', label='Big: Duo')
+    ax2_left.plot(rtdatetime,big_vol_kong, color='green', label='Big: Kong')
+    #plt.legend()
+    #ax2_left.tick_params(axis='y', colors='red')
+
+    #ax2_right = ax2_left.twinx()
+    #ax2_right.set_ylabel('Kong', color='green')
+    #ax2_right.plot(big_vol_kong, color='green', label='Big: Kong')
+    #ax2_right.tick_params(axis='y', colors='green')
+
+    #plt.plot(last_px, color='black', label='Live Price')
+    #plt.plot(total_vol, color='blue', label='Total Vol')
+    #plt.plot(big_vol_duo, color='red', label='Big: Make Duo')
+    #plt.plot(big_vol_kong , color='green', label='Big: Make Kong')
+    #plt.legend()
     plt.show()
 
 #def sumredgreen(groupedsum):

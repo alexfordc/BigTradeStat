@@ -17,11 +17,13 @@ bigline = 1000     #手动指定大单标准线
 #biglines = [1000]
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
 
-datafiles = get_filelist(code)
+al_lists = read_al_files()
+al_lists = []
+datafiles = get_filelist(al_lists,code)
 for i in range(len(datafiles)):
     datafile = datafiles[i]
-    df = read_file(i,datafile)
-    print(df)
+    df = read_file(i,al_lists,datafile)
+    #print(df)
     #class_file = classify_by_nature(df)
 
 

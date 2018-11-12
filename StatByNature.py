@@ -20,8 +20,9 @@ bigline = 1000     #手动指定大单标准线
 datafiles = get_filelist(code)
 for i in range(len(datafiles)):
     datafile = datafiles[i]
-    df = read_file(datafile)
-    class_file = classify_by_nature(df)
+    df = read_file(i,datafile)
+    print(df)
+    #class_file = classify_by_nature(df)
 
 
 #Zy19921095641

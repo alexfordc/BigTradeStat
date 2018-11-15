@@ -16,6 +16,7 @@ code = 'RB.SHF'
 bigline = 1000     #手动指定大单标准线
 #biglines = [1000]
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
+w.start()
 
 al_lists = read_al_files()
 al_lists = []
@@ -23,9 +24,9 @@ datafiles = get_filelist(al_lists,code)
 for i in range(len(datafiles)):
     datafile = datafiles[i]
     df = read_file(i,al_lists,datafile)
-    #print(df)
-    #class_file = classify_by_nature(df)
-
+    pre_oi = w.wsd(code,'oi',"ED-1TD",getdate(datafile),'').Data[0][0]
+    classify_df = classify_by_nature(pre_oi,df)
+    saveCSV(datafile,classify_df)
 
 #Zy19921095641
 

@@ -62,7 +62,7 @@ def read_file(i,al_lists,datafile):
     yesterday = get_yesterday(dfdate)
     df = pd.read_csv(datafile, encoding='gb2312', usecols=(0, 1, 3, 5, 6),
                  dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
-                        '性质': str},nrows=10)
+                        '性质': str})#,nrows=5)
     print('读取第%d个文件%r,共%d行' % (i+1,datafile, len(df.index)))
     df.insert(0,'天数',i+1)
     start = datetime.now()
@@ -78,7 +78,39 @@ def read_file(i,al_lists,datafile):
     update(al_lists)
     return df
 
+def getdate(datafile):
+    filedate = datafile.split('_')[1].split('.')[0]
+    fdate = filedate[:4] + '-' + filedate[4:6] + '-' + filedate[6:]
+    print(fdate)
+    return (fdate)
 
+def classify_by_nature(pre_oi,df):
+    naturelist = ['多开', '空平', '空开', '多平', '双开', '多换', '双平', '空换']
+    vol_nature = {}
+    nature_index = {}
+    for i in range(len(naturelist)):
+        vol_nature[naturelist[i]] = 0
+    classify_df = df.loc[:,['天数','时间','价格','现手','增仓']]
+    classify_df.insert(4,'总量',0)
+    classify_df.insert(6,'持仓',0)
+    for i in range(len(naturelist)):
+        classify_df.insert(i+7,naturelist[i],0)
+        nature_index[naturelist[i]] = i+7
+    for index, row in df.iterrows():
+        df_i = df[:index + 1]
+        total_vol_i = df_i.iloc[:,3].sum()
+        total_oi_i = df_i.iloc[:,4].sum()
+        classify_df.iloc[index, 4] = total_vol_i
+        classify_df.iloc[index, 6] = total_oi_i + pre_oi
+        vol_nature[row.性质] += row.现手
+        classify_df.iloc[index, nature_index[row.性质]] = vol_nature[row.性质]
 
-def classify_by_nature(df):
-    print()
+    #pd.set_option('display.max_columns', None)
+    #pd.set_option('max_colwidth', 100)
+    #print(classify_df)
+
+    return (classify_df)
+
+def saveCSV(datafile,classify_df):
+    filename = 'Classify_Data/' + datafile.strip('.csv') + '_classified.csv'
+    classify_df.to_csv(filename,index=0,encoding='gb2312')

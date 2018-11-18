@@ -10,6 +10,8 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
+pd.set_option('display.max_columns', None)
+
 #####################
 #codelist = ['RB.SHF','I.DCE','J.DCE']
 code = 'RB.SHF'
@@ -18,7 +20,7 @@ bigline = 1000     #手动指定大单标准线
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
 
 al_lists = read_al_files()
-al_lists = []
+#al_lists = []
 
 ### 处理原始数据 ###
 datafiles = get_filelist(al_lists,code)
@@ -32,11 +34,21 @@ if len(datafiles) > 0:
         saveCSV(datafile,classify_df)
 
 ### 根据大单线整理数据 ###
-#classify_datafiles = get_classify_files(code)
-#for i in range(len(classify_datafiles)):
-#    classify_datafile = classify_datafiles[i]
-#    df = pd.read_csv(classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
-
+classify_datafiles = get_classify_files(code)
+import matplotlib.pyplot as plt
+for i in range(len(classify_datafiles)):
+    classify_datafile = classify_datafiles[i]
+    #df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
+    df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
+    #print(df['时间'])
+    datetimelist = df['时间'].tolist()
+    x1ticks = list(range(0, len(datetimelist), int(len(datetimelist) / 20)))
+    x1labels = [datetimelist[x] for x in x1ticks]
+    plt.xticks(x1ticks,x1labels,rotation=45)
+    plt.plot(df['增仓'])
+    plt.show()
+    #dfbig = df.loc[df['现手'] >= bigline]
+    #print(dfbig)
 
 #today = datetime.now().strftime('%Y%m%d')
 #filename = 'test_' + today + '.csv'

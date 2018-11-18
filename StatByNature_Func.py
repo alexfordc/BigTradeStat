@@ -52,6 +52,20 @@ def get_filelist(al_lists,code):
         print('%d个文件: %s' % (len(codefiles),', '.join(codefiles)))
     return codefiles
 
+def get_classify_files(code):
+    allfiles = os.listdir('Classify_Data/')
+    codefiles = []
+    for item in allfiles:
+        if (code in item):
+            codefiles.append(item)
+    codefiles = sorted(codefiles)
+    if len(codefiles) == 0:
+        print('没有已经按性质分列处理的%s文件' % code)
+        exit()
+    else:
+        print('%d个文件: %s' % (len(codefiles), ', '.join(codefiles)))
+    return codefiles
+
 def get_yesterday(dfdate):
     today = datetime.strptime(dfdate,'%Y%m%d')
     yesterday = (today - timedelta(days=1)).strftime('%Y%m%d')
@@ -85,13 +99,13 @@ def getdate(datafile):
 
 def classify_by_nature(pre_oi,df):
     naturelist = ['多开', '空平', '空开', '多平', '双开', '多换', '双平', '空换']
-    vol_nature = {}
+    classify_df = df.loc[:, ['天数', '时间', '价格', '现手', '增仓']]
+    classify_df.insert(4, '总量', 0)
+    classify_df.insert(6, '持仓', 0)
+    #vol_nature = {}
+    #for i in range(len(naturelist)):
+    #    vol_nature[naturelist[i]] = 0
     nature_index = {}
-    for i in range(len(naturelist)):
-        vol_nature[naturelist[i]] = 0
-    classify_df = df.loc[:,['天数','时间','价格','现手','增仓']]
-    classify_df.insert(4,'总量',0)
-    classify_df.insert(6,'持仓',0)
     for i in range(len(naturelist)):
         classify_df.insert(i+7,naturelist[i],0)
         nature_index[naturelist[i]] = i+7
@@ -103,8 +117,9 @@ def classify_by_nature(pre_oi,df):
         total_oi_i = df_i.iloc[:,4].sum()
         classify_df.iloc[index, 4] = total_vol_i
         classify_df.iloc[index, 6] = total_oi_i + pre_oi
-        vol_nature[row.性质] += row.现手
-        classify_df.iloc[index, nature_index[row.性质]] = vol_nature[row.性质]
+        #vol_nature[row.性质] += row.现手
+        #classify_df.iloc[index, nature_index[row.性质]] = vol_nature[row.性质]
+        classify_df.iloc[index, nature_index[row.性质]] = row.现手
         end = datetime.now()
         report_progress(index, len(df.index), start, end)
     report_progress_done()

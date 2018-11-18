@@ -18,7 +18,9 @@ bigline = 1000     #手动指定大单标准线
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
 
 al_lists = read_al_files()
-#al_lists = []
+al_lists = []
+
+### 处理原始数据 ###
 datafiles = get_filelist(al_lists,code)
 if len(datafiles) > 0:
     w.start()
@@ -29,6 +31,11 @@ if len(datafiles) > 0:
         classify_df = classify_by_nature(pre_oi,df)
         saveCSV(datafile,classify_df)
 
+### 根据大单线整理数据 ###
+#classify_datafiles = get_classify_files(code)
+#for i in range(len(classify_datafiles)):
+#    classify_datafile = classify_datafiles[i]
+#    df = pd.read_csv(classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
 
 
 #today = datetime.now().strftime('%Y%m%d')

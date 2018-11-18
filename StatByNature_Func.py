@@ -47,10 +47,10 @@ def get_filelist(al_lists,code):
     codefiles = sorted(codefiles)
     if len(codefiles) == 0:
         print('所有文件均早已读取。如需重读，请更改已读文件列表文件。')
-        exit()
+        #exit()
     else:
         print('%d个文件: %s' % (len(codefiles),', '.join(codefiles)))
-        return codefiles
+    return codefiles
 
 def get_yesterday(dfdate):
     today = datetime.strptime(dfdate,'%Y%m%d')
@@ -63,7 +63,7 @@ def read_file(i,al_lists,datafile):
     df = pd.read_csv(datafile, encoding='gb2312', usecols=(0, 1, 3, 5, 6),
                  dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
                         '性质': str})#,nrows=5)
-    print('读取第%d个文件%r,共%d行' % (i+1,datafile, len(df.index)))
+    print('读取第%d个文件%r,添加日期，共%d行' % (i+1,datafile, len(df.index)))
     df.insert(0,'天数',i+1)
     start = datetime.now()
     for index, row in df.iterrows():
@@ -81,7 +81,6 @@ def read_file(i,al_lists,datafile):
 def getdate(datafile):
     filedate = datafile.split('_')[1].split('.')[0]
     fdate = filedate[:4] + '-' + filedate[4:6] + '-' + filedate[6:]
-    print(fdate)
     return (fdate)
 
 def classify_by_nature(pre_oi,df):
@@ -96,6 +95,8 @@ def classify_by_nature(pre_oi,df):
     for i in range(len(naturelist)):
         classify_df.insert(i+7,naturelist[i],0)
         nature_index[naturelist[i]] = i+7
+    print('按性质分列、求和')
+    start = datetime.now()
     for index, row in df.iterrows():
         df_i = df[:index + 1]
         total_vol_i = df_i.iloc[:,3].sum()
@@ -104,7 +105,9 @@ def classify_by_nature(pre_oi,df):
         classify_df.iloc[index, 6] = total_oi_i + pre_oi
         vol_nature[row.性质] += row.现手
         classify_df.iloc[index, nature_index[row.性质]] = vol_nature[row.性质]
-
+        end = datetime.now()
+        report_progress(index, len(df.index), start, end)
+    report_progress_done()
     #pd.set_option('display.max_columns', None)
     #pd.set_option('max_colwidth', 100)
     #print(classify_df)

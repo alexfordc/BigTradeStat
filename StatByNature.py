@@ -34,19 +34,19 @@ if len(datafiles) > 0:
         saveCSV(datafile,classify_df)
 
 ### 根据大单线整理数据 ###
-classify_datafiles = get_classify_files(code)
-import matplotlib.pyplot as plt
-for i in range(len(classify_datafiles)):
-    classify_datafile = classify_datafiles[i]
-    #df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
-    df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
-    #print(df['时间'])
-    datetimelist = df['时间'].tolist()
-    x1ticks = list(range(0, len(datetimelist), int(len(datetimelist) / 20)))
-    x1labels = [datetimelist[x] for x in x1ticks]
-    plt.xticks(x1ticks,x1labels,rotation=45)
-    plt.plot(df['增仓'])
-    plt.show()
+#classify_datafiles = get_classify_files(code)
+#import matplotlib.pyplot as plt
+#for i in range(len(classify_datafiles)):
+#    classify_datafile = classify_datafiles[i]
+#    #df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
+#    df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
+#    #print(df['时间'])
+#    datetimelist = df['时间'].tolist()
+#    x1ticks = list(range(0, len(datetimelist), int(len(datetimelist) / 20)))
+#    x1labels = [datetimelist[x] for x in x1ticks]
+#    plt.xticks(x1ticks,x1labels,rotation=45)
+#    plt.plot(df['增仓'])
+#    plt.show()
     #dfbig = df.loc[df['现手'] >= bigline]
     #print(dfbig)
 
@@ -60,7 +60,7 @@ for i in range(len(classify_datafiles)):
 #print('开始：',start.strftime('%Y-%m-%d %H:%M:%S'))
 #dfs = read_files(datafiles)
 #stat_file = stat_data(dfs,bigline)
-stat_file = 'Stated_Records_20181108_1000.csv'
+#stat_file = 'Stated_Records_20181108_1000.csv'
 #plot_data(stat_file)
 
 #for i in range(len(biglines)):

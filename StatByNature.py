@@ -16,6 +16,7 @@ pd.set_option('display.max_columns', None)
 #codelist = ['RB.SHF','I.DCE','J.DCE']
 code = 'RB.SHF'
 bigline = 1000     #手动指定大单标准线
+classify_path = 'Classify_Data/'
 #biglines = [1000]
 #bigline = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
 
@@ -31,15 +32,16 @@ if len(datafiles) > 0:
         df = read_file(i,al_lists,datafile)
         pre_oi = w.wsd(code,'oi',"ED-1TD",getdate(datafile),'').Data[0][0]
         classify_df = classify_by_nature(pre_oi,df)
-        saveCSV(datafile,classify_df)
+        saveCSV(datafile,classify_df,classify_path)
+    w.stop()
 
 ### 根据大单线整理数据 ###
 #classify_datafiles = get_classify_files(code)
 #import matplotlib.pyplot as plt
 #for i in range(len(classify_datafiles)):
 #    classify_datafile = classify_datafiles[i]
-#    #df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
-#    df = pd.read_csv('Classify_Data/'+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
+#    #df = pd.read_csv(classify_path+classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)
+#    df = pd.read_csv(classify_path+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
 #    #print(df['时间'])
 #    datetimelist = df['时间'].tolist()
 #    x1ticks = list(range(0, len(datetimelist), int(len(datetimelist) / 20)))

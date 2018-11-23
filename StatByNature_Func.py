@@ -129,6 +129,6 @@ def classify_by_nature(pre_oi,df):
 
     return (classify_df)
 
-def saveCSV(datafile,classify_df):
-    filename = 'Classify_Data/' + datafile.strip('.csv') + '_classified.csv'
+def saveCSV(datafile,classify_df,classify_path):
+    filename = classify_path + datafile.strip('.csv') + '_classified.csv'
     classify_df.to_csv(filename,index=0,encoding='gb2312')

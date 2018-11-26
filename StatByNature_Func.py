@@ -78,7 +78,7 @@ def read_file(i,al_lists,datafile):
                  dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
                         '性质': str})#,nrows=5)
     print('读取第%d个文件%r,添加日期，共%d行' % (i+1,datafile, len(df.index)))
-    df.insert(0,'天数',i+1)
+    df.insert(0,'天数',len(al_lists)+i+1)
     start = datetime.now()
     for index, row in df.iterrows():
         if datetime.strptime(row.时间, '%H:%M:%S') > datetime.strptime('20:00:00', '%H:%M:%S'):

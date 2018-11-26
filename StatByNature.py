@@ -41,13 +41,16 @@ classify_datafiles = get_classify_files(code,classify_path)     #从指定路径
 for i in range(len(classify_datafiles)):
     classify_datafile = classify_datafiles[i]
     df = pd.read_csv(classify_path+classify_datafile, encoding='gb2312', usecols=(0,1,2,3,5,6,7,8,9,10),dtype={'天数': int,'时间': str,'价格': np.int32,'现手': np.int32,'增仓': np.int32,'持仓': np.int32,'多开': np.int32,'空平': np.int32,'空开': np.int32,'多平': np.int32})  # ,nrows=5)  # 仅读取按性质分列数据中的天数、时间、价格、现手、增仓、持仓、多开、空平、空开、多平10列的数据
-    dfbig = df.loc[df['现手'] >= bigline]     #根据大单线读取大单数据
+    dfbig = df[df['现手'] >= bigline]     #根据大单线读取大单数据
+    stas_df = df.loc[:,'天数':'持仓']
     for index, row in df.iterrows():
-        df_i = df[:index + 1]
+        df_i = df.loc[:index]
+        dfbig_i = dfbig.loc[:index]
+        total_duo, count_duo, total_kong, count_kong = sum_count_df(df_i)
+        big_total_duo, big_count_duo, big_total_kong, big_count_kong = sum_count_df(dfbig_i)
+        stas_df = add_cols(index,stas_df,total_duo,count_duo,total_kong,count_kong,big_total_duo,big_count_duo,big_total_kong,big_count_kong)
+    print(stas_df)
 
-        total_duo = df_i.iloc[:,7:8].sum()# + df_i.iloc[:,8].sum()
-        total_kong = df_i.iloc[:,9].sum()# + df_i.iloc[:,10].sum()
-        print(total_duo,total_kong)
 #    df = pd.read_csv(classify_path+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
 #    datetimelist = df['时间'].tolist()
 #    x1ticks = list(range(0, len(datetimelist), int(len(datetimelist) / 20)))

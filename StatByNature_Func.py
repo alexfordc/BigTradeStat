@@ -129,6 +129,25 @@ def classify_by_nature(pre_oi,df):
 
     return (classify_df)
 
+def sum_count_df(df):
+    total_duo = int(df.loc[:, '多开'].sum() + df.loc[:, '空平'].sum())
+    total_kong = int(df.loc[:, '空开'].sum() + df.loc[:, '多平'].sum())
+    count_duo = int(len(df[(df['多开'] > 0) | (df['空平'] > 0)].index))
+    count_kong = int(len(df[(df['空开'] > 0) | (df['多平'] > 0)].index))
+    return (total_duo,count_duo,total_kong,count_kong)
+
+def add_cols(index,stas_df,total_duo,count_duo,total_kong,count_kong,big_total_duo,big_count_duo,big_total_kong,big_count_kong):
+    stas_df.loc[index, '累计做多'] = total_duo
+    stas_df.loc[index, '做多次数'] = count_duo
+    stas_df.loc[index, '累计大单做多'] = big_total_duo
+    stas_df.loc[index, '大单做多次数'] = big_count_duo
+    stas_df.loc[index, '累计做空'] = total_kong
+    stas_df.loc[index, '做空次数'] = count_kong
+    stas_df.loc[index, '累计大单做空'] = big_total_kong
+    stas_df.loc[index, '大单做空次数'] = big_count_kong
+    return stas_df
+
+
 def saveCSV(datafile,classify_df,classify_path):
     filename = classify_path + datafile.strip('.csv') + '_classified.csv'
     classify_df.to_csv(filename,index=0,encoding='gb2312')

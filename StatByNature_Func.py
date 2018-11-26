@@ -52,8 +52,8 @@ def get_filelist(al_lists,code):
         print('%d个文件: %s' % (len(codefiles),', '.join(codefiles)))
     return codefiles
 
-def get_classify_files(code):
-    allfiles = os.listdir('Classify_Data/')
+def get_classify_files(code,classify_path):
+    allfiles = os.listdir(classify_path)
     codefiles = []
     for item in allfiles:
         if (code in item):

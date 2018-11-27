@@ -28,12 +28,31 @@ def read_al_files():
         file.close()
     return al_lists
 
-def update(al_lists):
+def update_al_list(al_lists):
     al_files = 'Already_read_files.txt'
     if len(al_lists) > 0:
         file = open(al_files, mode='w')
         for item in al_lists:
             print('%s' % item,file=file)
+        file.close()
+
+def update_big_list(bigline,classify_datafile):
+    big_lists = []
+    big_file = 'Already_big'+str(bigline)+'.txt'
+    if (os.path.exists(big_file)):
+        file = open(big_file, mode='r')
+        lines = file.readlines()
+        if len(lines) > 0:
+            for item in lines:
+                big_lists.append(item.strip('\n'))
+        file.close()
+        if classify_datafile not in big_lists:
+            file = open(big_file, mode='w')
+            print('%s' % classify_datafile,file=file)
+            file.close()
+    else:
+        file = open(big_file, mode='w')
+        print('%s' % classify_datafile, file=file)
         file.close()
 
 
@@ -52,15 +71,24 @@ def get_filelist(al_lists,code):
         print('%d个文件: %s' % (len(codefiles),', '.join(codefiles)))
     return codefiles
 
-def get_classify_files(code,classify_path):
+def get_classify_files(code,bigline,classify_path):
     allfiles = os.listdir(classify_path)
+    big_file = 'Already_big'+str(bigline)+'.txt'
     codefiles = []
+    big_lists = []
+    if (os.path.exists(big_file)):
+        file = open(big_file, mode='r')
+        lines = file.readlines()
+        if len(lines) > 0:
+            for item in lines:
+                big_lists.append(item.strip('\n'))
+        file.close()
     for item in allfiles:
-        if (code in item):
+        if (code in item) and (item not in big_lists):
             codefiles.append(item)
     codefiles = sorted(codefiles)
     if len(codefiles) == 0:
-        print('没有已经按性质分列处理的%s文件' % code)
+        print('没有需要统计大单数据的%s文件' % code)
         exit()
     else:
         print('%d个文件: %s' % (len(codefiles), ', '.join(codefiles)))
@@ -89,7 +117,7 @@ def read_file(i,al_lists,datafile):
         report_progress(index, len(df.index), start, end)
     report_progress_done()
     al_lists.append(datafile)
-    update(al_lists)
+    update_al_list(al_lists)
     return df
 
 def getdate(datafile):

@@ -33,7 +33,7 @@ if len(datafiles) > 0:
         df = read_file(i,al_lists,datafile) #读取文件，同时更新“已读取文件清单”
         pre_oi = w.wsd(code,'oi',"ED-1TD",getdate(datafile),'').Data[0][0]  #获取数据前一天的持仓量
         classify_df = classify_by_nature(pre_oi,df)     #按性质分类数据。主要加入实时总交易量、持仓量，将现手按性质分列输出
-        saveCSV(datafile,classify_df,classify_path)     #保存性质分列数据到指定路径
+        save_classify_CSV(datafile,classify_df,classify_path)     #保存性质分列数据到指定路径
     #w.stop()
 
 ### 根据大单线整理数据 ###
@@ -56,6 +56,7 @@ for i in range(len(classify_datafiles)):
     report_progress_done()
     save_big_CSV(classify_datafile, stas_df, big_path,bigline)
 
+merge_big_files(code,big_path)
 
 
 

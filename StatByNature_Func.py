@@ -147,7 +147,24 @@ def add_cols(index,stas_df,total_duo,count_duo,total_kong,count_kong,big_total_d
     stas_df.loc[index, '大单做空次数'] = big_count_kong
     return stas_df
 
+def save_classify_CSV(datafile,classify_df,classify_path):
+    filename = classify_path + datafile.strip('.csv') + '_classified.csv'
+    classify_df.to_csv(filename,index=0,encoding='gb2312')
 
 def save_big_CSV(classify_datafile, stas_df, big_path,bigline):
     filename = big_path + classify_datafile.strip('.csv') + '_big' + str(bigline) +'.csv'
     stas_df.to_csv(filename,index=0,encoding='gb2312')
+
+def merge_big_files(code,big_path):
+    allfiles = os.listdir(big_path)
+    codefiles = []
+    for item in allfiles:
+        if (code in item):
+            codefiles.append(item)
+    codefiles = sorted(codefiles)
+    if len(codefiles) == 0:
+        print('没有合并的%s大单文件' % code)
+        exit()
+    else:
+        print('%d个%s大单文件待合并' % (len(codefiles),code))
+

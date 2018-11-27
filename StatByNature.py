@@ -44,7 +44,7 @@ for i in range(len(classify_datafiles)):
     dfbig = df[df['现手'] >= bigline]     #根据大单线读取大单数据
     stas_df = df.loc[:,'天数':'持仓']
     start = datetime.now()
-    print('统计大单:')
+    print('%s统计大单,大单线%d:' % (classify_datafile,bigline))
     for index, row in df.iterrows():
         df_i = df.loc[:index]
         dfbig_i = dfbig.loc[:index]
@@ -54,7 +54,10 @@ for i in range(len(classify_datafiles)):
         end = datetime.now()
         report_progress(index, len(df.index), start, end)
     report_progress_done()
-    print(stas_df)
+    save_big_CSV(classify_datafile, stas_df, big_path,bigline)
+
+
+
 
 #    df = pd.read_csv(classify_path+classify_datafile, encoding='gb2312', usecols=(1,5),dtype={'天数': int,'增仓':np.int32})  # ,nrows=5)
 #    datetimelist = df['时间'].tolist()

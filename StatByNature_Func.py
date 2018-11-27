@@ -148,6 +148,6 @@ def add_cols(index,stas_df,total_duo,count_duo,total_kong,count_kong,big_total_d
     return stas_df
 
 
-def saveCSV(datafile,classify_df,classify_path):
-    filename = classify_path + datafile.strip('.csv') + '_classified.csv'
-    classify_df.to_csv(filename,index=0,encoding='gb2312')
+def save_big_CSV(classify_datafile, stas_df, big_path,bigline):
+    filename = big_path + classify_datafile.strip('.csv') + '_big' + str(bigline) +'.csv'
+    stas_df.to_csv(filename,index=0,encoding='gb2312')

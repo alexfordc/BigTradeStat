@@ -183,9 +183,11 @@ def save_big_CSV(classify_datafile, stas_df, big_path,bigline):
     filename = big_path + classify_datafile.strip('.csv') + '_big' + str(bigline) +'.csv'
     stas_df.to_csv(filename,index=0,encoding='gb2312')
 
-def merge_big_files(code,big_path):
+def merge_big_files(code,big_path,bigline):
     allfiles = os.listdir(big_path)
     codefiles = []
+    dflist = []
+    datelist = []
     for item in allfiles:
         if (code in item):
             codefiles.append(item)
@@ -195,4 +197,14 @@ def merge_big_files(code,big_path):
         exit()
     else:
         print('%d个%s大单文件待合并' % (len(codefiles),code))
-
+        for i in range(len(codefiles)):
+            datelist.append(codefiles[i].split('_')[1])
+            filename = big_path + codefiles[i]
+            df = pd.read_csv(filename, encoding='gb2312')
+            dflist.append(df)
+        if len(dflist) > 0:
+            datelist = sorted(datelist)
+            alldf = pd.concat(dflist, ignore_index=True)
+            alldfname = code + '_' + datelist[0] + '-' + datelist[-1] + '_big' + str(bigline) + '.txt'
+            alldf.to_csv(alldfname, index=0, encoding='gb2312')
+            print('合并后的文件保存为%s' % alldfname)

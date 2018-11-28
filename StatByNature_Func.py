@@ -47,7 +47,7 @@ def update_big_list(bigline,classify_datafile):
                 big_lists.append(item.strip('\n'))
         file.close()
         if classify_datafile not in big_lists:
-            file = open(big_file, mode='w')
+            file = open(big_file, mode='a')
             print('%s' % classify_datafile,file=file)
             file.close()
     else:
@@ -89,7 +89,7 @@ def get_classify_files(code,bigline,classify_path):
     codefiles = sorted(codefiles)
     if len(codefiles) == 0:
         print('没有需要统计大单数据的%s文件' % code)
-        exit()
+        #exit()
     else:
         print('%d个文件: %s' % (len(codefiles), ', '.join(codefiles)))
     return codefiles

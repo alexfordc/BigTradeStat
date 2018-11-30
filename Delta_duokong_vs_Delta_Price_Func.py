@@ -209,5 +209,7 @@ def save_Excel(filename,stat_df):
         old_df = pd.read_excel(filename)
         df = pd.concat([old_df,stat_df], ignore_index=True)
         df.to_excel(filename, index=False, encoding='gb2312')
+        print('每日大单统计数据写入文件: %s' % filename)
     else:
         stat_df.to_excel(filename, index=False, encoding='gb2312')
+        print('每日大单统计数据写入文件: %s' % filename)

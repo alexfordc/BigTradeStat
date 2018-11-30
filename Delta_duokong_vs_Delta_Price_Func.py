@@ -209,7 +209,25 @@ def save_Excel(filename,stat_df):
         old_df = pd.read_excel(filename)
         df = pd.concat([old_df,stat_df], ignore_index=True)
         df.to_excel(filename, index=False, encoding='gb2312')
-        print('每日大单统计数据写入文件: %s' % filename)
+        print('每日大单统计数据写入文件 %s Sheet1子表' % filename)
     else:
         stat_df.to_excel(filename, index=False, encoding='gb2312')
-        print('每日大单统计数据写入文件: %s' % filename)
+        print('每日大单统计数据写入文件 %s Sheet1子表' % filename)
+
+
+def calc_correlation(code,biglines,filename):
+    df = pd.read_excel(filename)
+    corr_df = pd.DataFrame(columns=['多空总量比','价格涨跌','价格涨跌百分比',' ','多空分类比','价格涨跌_','价格涨跌百分比_'])
+    writer = pd.ExcelWriter(filename)
+    df.to_excel(writer,sheet_name='Sheet1', index=False, encoding='gb2312')
+    for i in range(len(biglines)):
+        bigline = biglines[i]
+        df2 = pd.DataFrame(df,columns=['价格涨跌','价格涨跌百分比',str(bigline)+'多空总量比差',str(bigline)+'多空分类比差'])
+        corr_df.loc[i,'多空总量比'] = bigline
+        corr_df.loc[i,'价格涨跌'] = df2.corr().loc['价格涨跌',str(bigline)+'多空总量比差']
+        corr_df.loc[i,'价格涨跌百分比'] = df2.corr().loc['价格涨跌百分比',str(bigline)+'多空总量比差']
+        corr_df.loc[i,'多空分类比'] = bigline
+        corr_df.loc[i,'价格涨跌_'] = df2.corr().loc['价格涨跌',str(bigline)+'多空分类比差']
+        corr_df.loc[i,'价格涨跌百分比_'] = df2.corr().loc['价格涨跌百分比',str(bigline)+'多空分类比差']
+    corr_df.to_excel(writer,sheet_name='相关性分析', index=False, encoding='gb2312')
+    print('相关性分析写入文件 %s 相关性分析子表' % filename)

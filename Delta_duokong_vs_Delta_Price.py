@@ -67,13 +67,13 @@ for i in range(len(classify_datafiles)):
         big_kong = (df.loc[:, '空开'][df['空开'] >= bigline].sum() + df.loc[:, '多平'][df['多平'] >= bigline].sum())
         delta_duo_kong = big_duo - big_kong
         deltaratio_total = delta_duo_kong*100/total
-        deltaratio_big_kong = 100*(big_duo/total_duo) - 100*(big_kong/total_kong)
+        deltaratio_duo_kong = 100*(big_duo/total_duo) - 100*(big_kong/total_kong)
         stat_df.loc[i, '%d多单' % bigline] = big_duo
         stat_df.loc[i, '%d空单' % bigline] = big_kong
         stat_df.loc[i, '%d多空差' % bigline] = delta_duo_kong
         stat_df.loc[i, '%d多空总量比差' % bigline] = 100*delta_duo_kong/total
-        stat_df.loc[i, '%d多空分类比差' % bigline] = deltaratio_big_kong
+        stat_df.loc[i, '%d多空分类比差' % bigline] = deltaratio_duo_kong
     update_big_list(code,classify_datafile)
-
 filename = code + '_BigDuoKong_vs_Price.xlsx'
 save_Excel(filename,stat_df)
+calc_correlation(code,biglines,filename)

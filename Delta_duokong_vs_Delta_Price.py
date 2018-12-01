@@ -12,9 +12,9 @@ pd.set_option('display.max_columns', None)
 
 #####################
 #codelist = ['RB.SHF','I.DCE','J.DCE']
-code = 'RB.SHF'
-biglines = [1000,1500]
-#biglines = [x for x in range(0,500,100)]    #等差列表产生一系列大单标准线
+code = 'I.DCE'
+#biglines = [1000,1500]
+biglines = [x for x in range(100,5050,100)]    #等差列表产生一系列大单标准线
 #bigline = 1000     #手动指定大单标准线
 classify_path = 'Classify_Data_noVol/'    #保存按性质分类的每天数据的路径
 

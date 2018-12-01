@@ -105,7 +105,7 @@ def read_file(i,al_lists,datafile):
     dfdate = datafile.split('_')[1].split('.')[0]
     yesterday = get_yesterday(dfdate)
     df = pd.read_csv(datafile, encoding='gb2312', usecols=(0, 1, 3, 5, 6),
-                 dtype={'时间': str, '价格': np.int32, '现手': np.int32, '增仓': np.int32,
+                 dtype={'时间': str, '价格': np.float64, '现手': np.float64, '增仓': np.float64,
                         '性质': str})#,nrows=5)
     #print('读取第%d个文件%r,添加日期，共%d行' % (i+1,datafile, len(df.index)))
     #df.insert(0,'天数',len(al_lists)+i+1)

@@ -30,8 +30,9 @@ def read_al_files():
 
 def update_al_list(al_lists):
     al_files = 'Already_Read_duokong_VS_price_files.txt'
+    al_lists = sorted(al_lists)
     if len(al_lists) > 0:
-        file = open(al_files, mode='a')
+        file = open(al_files, mode='w')
         for item in al_lists:
             print('%s' % item,file=file)
         file.close()
@@ -65,9 +66,9 @@ def get_filelist(al_lists,code):
                     codefiles.append(item)
     codefiles = sorted(codefiles)
     if len(codefiles) == 0:
-        print('所有文件均已读取。如需重读，请更改已读文件列表文件。')
+        print('所有%s文件均已读取。如需重读，请更改已读文件列表文件。' % code)
     else:
-        print('需读取%d个原始数据文件: %s' % (len(codefiles),', '.join(codefiles)))
+        print('需读取%d个%s原始数据文件: %s' % (len(codefiles),code,', '.join(codefiles)))
     return codefiles
 
 def get_classify_files(code,classify_path):
@@ -90,7 +91,7 @@ def get_classify_files(code,classify_path):
     codefiles = sorted(codefiles)
     if len(codefiles) == 0:
         print('没有需要统计大单数据的%s文件' % code)
-        exit()
+        #exit()
     else:
         #print('%d个%s文件需统计大单数据: %s' % (len(codefiles),code,', '.join(codefiles)))
         print('%d个%s文件需统计大单数据' % (len(codefiles),code))
@@ -230,4 +231,5 @@ def calc_correlation(code,biglines,filename):
         corr_df.loc[i,'价格涨跌_'] = df2.corr().loc['价格涨跌',str(bigline)+'多空分类比差']
         corr_df.loc[i,'价格涨跌百分比_'] = df2.corr().loc['价格涨跌百分比',str(bigline)+'多空分类比差']
     corr_df.to_excel(writer,sheet_name='相关性分析', index=False, encoding='gb2312')
+    writer.save()
     print('相关性分析写入文件 %s 相关性分析子表' % filename)

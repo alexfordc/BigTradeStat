@@ -31,7 +31,7 @@ for a in range(len(codelist)):
             df = read_file(i, al_lists, datafile)  # 读取文件，同时更新“已读取文件清单”
             classify_df = classify_by_nature(df)     #按性质分类数据。主要加入实时总交易量、持仓量，将现手按性质分列输出
             save_classify_CSV(datafile,classify_df,classify_path)     #保存性质分列数据到指定路径
-        print('所有文件中的现手数据均已按性质分列')
+        print('所有%s文件中的现手数据均已按性质分列' % code)
 
     ### 根据大单线统计数据 ###
     stat_df = pd.DataFrame(columns=['日期','开盘价','收盘价','价格涨跌','价格涨跌百分比'])

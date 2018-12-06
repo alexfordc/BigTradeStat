@@ -65,6 +65,7 @@ def get_filelist(al_lists,code):
                 if (code in item) and (item not in al_lists):
                     codefiles.append(item)
     codefiles = sorted(codefiles)
+    print('-'*50)
     if len(codefiles) == 0:
         print('所有%s文件均已读取。如需重读，请更改已读文件列表文件。' % code)
     else:
@@ -233,3 +234,4 @@ def calc_correlation(code,biglines,filename):
     corr_df.to_excel(writer,sheet_name='相关性分析', index=False, encoding='gb2312')
     writer.save()
     print('相关性分析写入文件 %s 相关性分析子表' % filename)
+    print('-' * 50)

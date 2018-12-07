@@ -15,28 +15,30 @@ codelist = ['HC.SHF','RB.SHF','I.DCE','J.DCE','JM.DCE']     #要处理的品种�
 biglines = [x for x in range(100,5050,100)]    #等差列表产生一系列大单标准线
 
 origin_path = '../Wind直接导出数据/'      #从Wind导出的原始数据的存放路径
-classify_path = 'Classify_Data/'    #保存按性质分类的每天数据的路径
+treated_path = 'Treated_Data/'          #保存增加持仓量、按性质分类后的数据的路径
 
 already_read_logfile = 'Already_Read_Files.log'     #记录哪些原始数据文件已经读取
 
 #######################################################
 
 already_read_files = get_already_files(already_read_logfile)      #读取“已经读取过”的文件清单
+w.start()
 for a in range(len(codelist)):      #按照code列表中的顺序依次处理
     code = codelist[a]
-    ### 处理原始数据（按性质分列） ###
+    ### 处理原始数据（增加持仓数据，现手按性质分列） ###
     datafiles = get_datafiles(origin_path,already_read_files,code)   #根据code名称、已读取文件列表，获取没有读取过的文件清单
     if len(datafiles) > 0:
         for i in range(len(datafiles)):
             datafile = datafiles[i]
+            print('处理第%d个文件(%s), 增加持仓数据, 现手数据按性质分列' % (i+1,datafile))
+            pre_oi = w.wsd(code, 'oi', "ED-1TD", getdate(datafile), '').Data[0][0]  # 获取数据文件日期前一天收盘后的持仓量
+            df = read_datafile(origin_path,datafile)  # 读取文件，同时更新“已读取文件清单”
+            treated_df = volumn_classify(pre_oi,df)     #加入实时总交易量、持仓量，将现手按性质分列输出
+            save_treated_csv(datafile,treated_df,treated_path)     #保存增加持仓、性质分列后的数据到指定路径
+            update_listfile(already_read_logfile,datafile)   #更新已读文件列表
+        print('所有%s原始数据文件已增加持仓数据、按性质分列' % code)
 
-#            print('现手数据按性质分列,第%d个文件: %s' % (i+1,datafile))
-#            df = read_file(i, already_read_files, datafile)  # 读取文件，同时更新“已读取文件清单”
-#            classify_df = classify_by_nature(df)     #按性质分类数据。主要加入实时总交易量、持仓量，将现手按性质分列输出
-#            save_classify_CSV(datafile,classify_df,classify_path)     #保存性质分列数据到指定路径
-#        print('所有%s文件中的现手数据均已按性质分列' % code)
-#
-#    ### 根据大单线统计数据 ###
+    ### 根据大单线统计数据 ###
 #    stat_df = pd.DataFrame(columns=['日期','开盘价','收盘价','价格涨跌','价格涨跌百分比'])
 #    colnum = len(stat_df.columns)
 #    for i in range(len(biglines)):

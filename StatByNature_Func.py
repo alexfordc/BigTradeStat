@@ -94,8 +94,9 @@ def get_classify_files(code,bigline,classify_path):
         print('%d个文件: %s' % (len(codefiles), ', '.join(codefiles)))
     return codefiles
 
-def get_yesterday(dfdate):
-    today = datetime.strptime(dfdate,'%Y%m%d')
+def get_yesterday(filedate):
+    ''' 返回数据文件日期的前一天日期'''
+    today = datetime.strptime(filedate, '%Y%m%d')
     yesterday = (today - timedelta(days=1)).strftime('%Y%m%d')
     return yesterday
 

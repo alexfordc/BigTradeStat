@@ -10,23 +10,22 @@ def report_progress(progress, total, start, end):
     length = 80
     percentnums = round(length*ratio)
     sec = (end-start).seconds
-    buf = '\r[%s%s] %d%% (%d Seconds)' % (('#'*percentnums),('-'*(length-percentnums)), percentage,sec)
+    buf = '\r[%s%s] %d%% (%d Seconds)' % (('>'*percentnums),('-'*(length-percentnums)), percentage,sec)
     sys.stdout.write(buf)
     sys.stdout.flush()
 def report_progress_done():
     sys.stdout.write('\n')
 
-def read_al_files():
-    al_files = 'Already_Read_duokong_VS_price_files.txt'
-    al_lists = []
-    if (os.path.exists(al_files)) :
-        file = open(al_files,mode='r')
+def get_already_files(already_read_logfile):
+    already_read_files = []
+    if (os.path.exists(already_read_logfile)) :
+        file = open(already_read_logfile,mode='r')
         lines = file.readlines()
         if len(lines) > 0:
             for item in lines:
-                al_lists.append(item.strip('\n'))
+                already_read_files.append(item.strip('\n'))
         file.close()
-    return al_lists
+    return already_read_files
 
 def update_al_list(al_lists):
     al_files = 'Already_Read_duokong_VS_price_files.txt'
@@ -57,17 +56,16 @@ def update_big_list(code,classify_datafile):
         file.close()
 
 
-def get_filelist(al_lists,code):
-    allfiles = os.listdir()
+def get_datafiles(origin_path,already_read_files,code):
+    allfiles = os.listdir(origin_path)
     codefiles = []
     for item in allfiles:
-        if (item.split('.')[-1] == 'csv'):
-                if (code in item) and (item not in al_lists):
-                    codefiles.append(item)
+        if (code in item) and (item not in already_read_files):
+            codefiles.append(item)
     codefiles = sorted(codefiles)
-    print('-'*50)
+    print('#'*80)
     if len(codefiles) == 0:
-        print('所有%s文件均已读取。如需重读，请更改已读文件列表文件。' % code)
+        print('所有%s文件均已读取。如需重读，请更改已读文件列表%s。' % (code,already_read_files))
     else:
         print('需读取%d个%s原始数据文件: %s' % (len(codefiles),code,', '.join(codefiles)))
     return codefiles

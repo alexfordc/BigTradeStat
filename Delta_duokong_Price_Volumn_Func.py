@@ -39,7 +39,7 @@ def get_datafiles(origin_path,already_read_files,code):
     codefiles = sorted(codefiles)   #按照文件名排序
     print('#'*100)   #分割线
     if len(codefiles) == 0:
-        print('所有%s文件均已读取。如需重读，请更改已读文件列表%s。' % (code,already_read_files))
+        print('所有%s文件均已读取。如需重读，请更改已读文件列表。' % (code))
     else:
         print('需读取%d个%s原始数据文件: %s' % (len(codefiles),code,', '.join(codefiles)))
     return codefiles
@@ -78,6 +78,10 @@ def volumn_classify(pre_oi,df):
     report_progress_done()
     return (treated_df)
 
+def save_treated_csv(datafile,treated_df,treated_path):
+    filename = treated_path + datafile.strip('.csv') + '_Volumn_Classify.csv'
+    treated_df.to_csv(filename,index=0,encoding='gb2312')
+
 def update_listfile(already_read_logfile,datafile):
     '''在已读取文件的文件中加入datafile的文件名。若已存在已读取文件，且datafile不在其中，追加datafile文件名；若不存在，则新建并写入datafile文件名'''
     filelist = []
@@ -97,8 +101,77 @@ def update_listfile(already_read_logfile,datafile):
         print('%s' % filename, file=logfile)
     logfile.close()
 
+def init_stat_df(fixed_list,scale_list,biglines):
+    '''初始化DataFrame，前几列固定为fixed_list，后面根据biglines数目不同，每个bigline均有scale_list几列'''
+    stat_df = pd.DataFrame(columns=fixed_list)
+    fixcolnum = len(stat_df.columns)
+    scalecolnum = len(scale_list)
+    for i in range(len(biglines)):
+        for j in range(len(scale_list)):
+            stat_df.insert(fixcolnum+scalecolnum*i+j, '%d%s' % (biglines[i],scale_list[j]), value=None)
+    return (stat_df)
 
+def get_statbig_files(code,already_statbig_logfile,treated_path):
+    already_files = get_already_files(already_statbig_logfile)
+    allfiles = os.listdir(treated_path)
+    codefiles = []
+    for item in allfiles:
+        if (code in item) and (item not in already_files):
+            codefiles.append(item)
+    codefiles = sorted(codefiles)   #按照文件名排序
+    if len(codefiles) == 0:
+        print('所有%s文件均已根据大单线统计数据' % (code))
+    else:
+        print('有%d个%s数据文件需要根据大单线统计数据' % (len(codefiles),code))
+    return codefiles
 
+def get_timeindex(df,timelist):
+    '''大时间段起点时间找不到整点时，时间往后找。其他时间点找不到整点时，时间往前找。'''
+    indexlists = []
+    for i in range(len(timelist)):
+        initlist = df[df.时间 == timelist[i]].index.tolist()
+        if len(initlist) > 0:
+            if i == 0:
+                #print(initlist[0],timelist[i])
+                indexlists.append(initlist[0])
+            else:
+                #print(initlist[-1],timelist[i])
+                indexlists.append(initlist[-1])
+        else:
+            starttime = datetime.strptime(timelist[i], '%H:%M:%S')
+            if i == 0:
+                while len(initlist) == 0:
+                    starttime += timedelta(seconds=1)
+                    initlist = df[df.时间 == starttime.strftime('%H:%M:%S')].index.tolist()
+                #print(initlist[0], starttime.strftime('%H:%M:%S'))
+                indexlists.append(initlist[0])
+            else:
+                while len(initlist) == 0:
+                    starttime -= timedelta(seconds=1)
+                    initlist = df[df.时间 == starttime.strftime('%H:%M:%S')].index.tolist()
+                #print(initlist[-1], starttime.strftime('%H:%M:%S'))
+                indexlists.append(initlist[-1])
+    return indexlists
+
+def get_timeinterval_indexs(code,df):
+    '''根据三个不同大时间段，获取间隔30分钟情况下，各个时间点对应的index。'''
+    indexlists = []
+    if (code == 'HC.SHF') or (code == 'RB.SHF'):
+        timelist1 = ['21:00:00','21:30:00','22:00:00','22:30:00','23:00:00']
+    elif (code == 'I.DCE') or (code == 'J.DCE') or (code == 'JM.DCE'):
+        timelist1 = ['21:00:00','21:30:00','22:00:00','22:30:00','23:00:00','23:30:00']
+    timelist2 = ['09:00:00','09:30:00','10:00:00','10:30:00','11:00:00','11:30:00']
+    timelist3 = ['13:30:00','14:00:00','14:30:00','15:00:00']
+    indexlist1 = get_timeindex(df,timelist1)
+    indexlist2 = get_timeindex(df,timelist2)
+    indexlist3 = get_timeindex(df,timelist3)
+    indexlists = [indexlist1,indexlist2,indexlist3]
+    return indexlists
+
+def stat_by_biglines(biglines,df,indexlists):
+    indexlist1 = indexlists[0]
+    indexlist2 = indexlists[1]
+    indexlist3 = indexlists[2]
 
 
 
@@ -210,9 +283,6 @@ def update_listfile(already_read_logfile,datafile):
 #    stas_df.loc[index, '大单做空次数'] = big_count_kong
 #    return stas_df
 #
-def save_treated_csv(datafile,treated_df,treated_path):
-    filename = treated_path + datafile.strip('.csv') + '_Volumn_Classify.csv'
-    treated_df.to_csv(filename,index=0,encoding='gb2312')
 #
 #def save_big_CSV(classify_datafile, stas_df, big_path,bigline):
 #    filename = big_path + classify_datafile.strip('.csv') + '_big' + str(bigline) +'.csv'

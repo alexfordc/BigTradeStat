@@ -41,7 +41,7 @@ for a in range(len(codelist)):      #按照code列表中的顺序依次处理
     ### 根据大单线统计 ###
     fixed_list = ['日期','时间段','开始价','结束价','价格涨跌','价格涨跌百分比','开始持仓','结束持仓','持仓变化','持仓变化百分比']   #定义固定的列标题
     scale_list = ['多单','空单','多空差','多空总量比差']#,'多空分类比差']      #根据不同大单线的固定标题
-    stat_df = init_stat_df(fixed_list,scale_list,biglines)
+    stat_df = init_stat_df(fixed_list,scale_list,biglines)      #根据给出的列标题初始化dataframe
     already_statbig_logfile = '%s_Already_StatBig_Files.log' % code     #记录哪些Volumn_Classify数据文件已根据大单线统计数据
     statbig_files = get_statbig_files(code,already_statbig_logfile,treated_path)     #从指定路径获取需要根据大单线统计数据的文件清单
     if len(statbig_files) > 0:
@@ -51,8 +51,8 @@ for a in range(len(codelist)):      #按照code列表中的顺序依次处理
             day = statbig_file.split('_')[1]
             file = treated_path + statbig_file
             df = pd.read_csv(file,encoding='gb2312')  # 读取文件
-            indexlists = get_timeinterval_indexs(code,df)
-            stat_df = stat_by_biglines(biglines,df,stat_df,indexlists,day)
-            update_listfile(already_statbig_logfile, statbig_file)
+            indexlists = get_timeinterval_indexs(code,df)   #获取每天三个交易时间段中，每隔30分钟对应的行的index
+            stat_df = stat_by_biglines(biglines,df,stat_df,indexlists,day)  #根据之前获取的行的index、大单线列表进行统计数据
+            update_listfile(already_statbig_logfile, statbig_file)      #更新已进行大单统计的文件列表
         save_statbig_excel(code,stat_df)
 #        calc_correlation(code,biglines,filename)

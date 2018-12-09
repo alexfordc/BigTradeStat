@@ -168,13 +168,67 @@ def get_timeinterval_indexs(code,df):
     indexlists = [indexlist1,indexlist2,indexlist3]
     return indexlists
 
-def stat_by_biglines(biglines,df,indexlists):
+def get_data_by_timerange(biglines,df,stat_df,indexlist,day):
+    init_count = len(stat_df.index)
+    total_count = len(indexlist)-1
+    for i in range(len(indexlist)-1):
+        if i == 0:
+            start_index = indexlist[i]
+        else:
+            start_index = indexlist[i]+1
+        end_index = indexlist[i+1]
+        row_start = df.iloc[start_index,:]
+        row_end = df.iloc[end_index,:]
+        stat_df.loc[init_count+i,'日期'] = day
+        stat_df.loc[init_count+i,'时间段'] = row_start.时间 + '-' + row_end.时间
+        stat_df.loc[init_count+i,'开始价'] = row_start.价格
+        stat_df.loc[init_count+i,'结束价'] = row_end.价格
+        stat_df.loc[init_count+i,'价格涨跌'] = row_end.价格 - row_start.价格
+        stat_df.loc[init_count+i,'价格涨跌百分比'] = 100*(row_end.价格 - row_start.价格)/row_start.价格
+        stat_df.loc[init_count+i,'开始持仓'] = row_start.持仓
+        stat_df.loc[init_count+i,'结束持仓'] = row_end.持仓
+        stat_df.loc[init_count+i,'持仓变化'] = row_end.持仓 - row_start.持仓
+        stat_df.loc[init_count+i,'持仓变化百分比'] = 100*(row_end.持仓 - row_start.持仓)/row_start.持仓
+
+        df2 = df.loc[start_index:end_index,:]
+        total = df2.loc[:, '现手'].sum()
+        #total_duo = (df2.loc[:, '多开'].sum() + df2.loc[:, '空平'].sum())
+        #total_kong = (df2.loc[:, '空开'].sum() + df2.loc[:, '多平'].sum())
+        for j in range(len(biglines)):
+            bigline = biglines[j]
+            big_duo = (df2.loc[:, '多开'][df['多开'] >= bigline].sum() + df2.loc[:, '空平'][df['空平'] >= bigline].sum())
+            big_kong = (df2.loc[:, '空开'][df['空开'] >= bigline].sum() + df2.loc[:, '多平'][df['多平'] >= bigline].sum())
+            delta_duo_kong = big_duo - big_kong
+            deltaratio_total = 100*delta_duo_kong/total
+            #deltaratio_duo_kong = 100*(big_duo/total_duo) - 100*(big_kong/total_kong)
+            stat_df.loc[init_count+i, '%d多单' % bigline] = big_duo
+            stat_df.loc[init_count+i, '%d空单' % bigline] = big_kong
+            stat_df.loc[init_count+i, '%d多空差' % bigline] = delta_duo_kong
+            stat_df.loc[init_count+i, '%d多空总量比差' % bigline] = deltaratio_total
+            #stat_df.loc[init_count+i, '%d多空分类比差' % bigline] = deltaratio_duo_kong
+    return (stat_df)
+
+def stat_by_biglines(biglines,df,stat_df,indexlists,day):
     indexlist1 = indexlists[0]
     indexlist2 = indexlists[1]
     indexlist3 = indexlists[2]
+    stat_df = get_data_by_timerange(biglines,df,stat_df,indexlist1,day)
+    stat_df = get_data_by_timerange(biglines,df,stat_df,indexlist2,day)
+    stat_df = get_data_by_timerange(biglines,df,stat_df,indexlist3,day)
+    return (stat_df)
 
 
-
+def save_statbig_excel(code,stat_df):
+    filename = code + '_BigDuoKong_Price_Volumn.xlsx'
+    #stat_df.to_excel(filename, index=False, encoding='gb2312')
+    if (os.path.exists(filename)):
+        old_df = pd.read_excel(filename)
+        df = pd.concat([old_df,stat_df], ignore_index=True)
+        df.to_excel(filename, index=False, encoding='gb2312')
+        print('每日分时间段大单统计数据写入文件 %s Sheet1子表' % filename)
+    else:
+        stat_df.to_excel(filename, index=False, encoding='gb2312')
+        print('每日分时间段大单统计数据写入文件 %s Sheet1子表' % filename)
 
 #def update_al_list(al_lists):
 #    al_files = 'Already_Read_duokong_VS_price_files.txt'

@@ -16,6 +16,7 @@ codelist = ['HC.SHF','RB.SHF','I.DCE','J.DCE','JM.DCE']
 #biglines = [1000,1500]
 biglines = [x for x in range(100,5050,100)]    #等差列表产生一系列大单标准线
 #bigline = 1000     #手动指定大单标准线
+origin_path = '../Wind直接导出数据/'
 classify_path = 'Classify_Data_noVol/'    #保存按性质分类的每天数据的路径
 
 al_lists = read_al_files()      #读取“已经读取过”的文件清单
@@ -23,12 +24,12 @@ al_lists = read_al_files()      #读取“已经读取过”的文件清单
 for a in range(len(codelist)):
     code = codelist[a]
     ### 处理原始数据（按性质分列） ###
-    datafiles = get_filelist(al_lists,code) #根据code名称获取没有读取过的文件清单
+    datafiles = get_filelist(origin_path,al_lists,code) #根据code名称获取没有读取过的文件清单
     if len(datafiles) > 0:
         for i in range(len(datafiles)):
             datafile = datafiles[i]
             print('现手数据按性质分列,第%d个文件: %s' % (i+1,datafile))
-            df = read_file(i, al_lists, datafile)  # 读取文件，同时更新“已读取文件清单”
+            df = read_file(i, origin_path,al_lists, datafile)  # 读取文件，同时更新“已读取文件清单”
             classify_df = classify_by_nature(df)     #按性质分类数据。主要加入实时总交易量、持仓量，将现手按性质分列输出
             save_classify_CSV(datafile,classify_df,classify_path)     #保存性质分列数据到指定路径
         print('所有%s文件中的现手数据均已按性质分列' % code)

@@ -10,7 +10,7 @@ def report_progress(progress, total, start, end):
     length = 80
     percentnums = round(length*ratio)
     sec = (end-start).seconds
-    buf = '\r[%s%s] %d%% (%d Seconds)' % (('#'*percentnums),('-'*(length-percentnums)), percentage,sec)
+    buf = '\r[%s%s] %d%% (%d Seconds)' % (('>'*percentnums),('-'*(length-percentnums)), percentage,sec)
     sys.stdout.write(buf)
     sys.stdout.flush()
 def report_progress_done():
@@ -57,15 +57,15 @@ def update_big_list(code,classify_datafile):
         file.close()
 
 
-def get_filelist(al_lists,code):
-    allfiles = os.listdir()
+def get_filelist(origin_path,al_lists,code):
+    allfiles = os.listdir(origin_path)
     codefiles = []
     for item in allfiles:
         if (item.split('.')[-1] == 'csv'):
                 if (code in item) and (item not in al_lists):
                     codefiles.append(item)
     codefiles = sorted(codefiles)
-    print('-'*50)
+    print('#'*50)
     if len(codefiles) == 0:
         print('所有%s文件均已读取。如需重读，请更改已读文件列表文件。' % code)
     else:
@@ -103,10 +103,11 @@ def get_yesterday(dfdate):
     yesterday = (today - timedelta(days=1)).strftime('%Y%m%d')
     return yesterday
 
-def read_file(i,al_lists,datafile):
+def read_file(i,origin_path,al_lists,datafile):
     dfdate = datafile.split('_')[1].split('.')[0]
     yesterday = get_yesterday(dfdate)
-    df = pd.read_csv(datafile, encoding='gb2312', usecols=(0, 1, 3, 5, 6),
+    dffile = open(origin_path + datafile)
+    df = pd.read_csv(dffile, usecols=(0, 1, 3, 5, 6),
                  dtype={'时间': str, '价格': np.float64, '现手': np.float64, '增仓': np.float64,
                         '性质': str})#,nrows=5)
     #print('读取第%d个文件%r,添加日期，共%d行' % (i+1,datafile, len(df.index)))
@@ -234,4 +235,3 @@ def calc_correlation(code,biglines,filename):
     corr_df.to_excel(writer,sheet_name='相关性分析', index=False, encoding='gb2312')
     writer.save()
     print('相关性分析写入文件 %s 相关性分析子表' % filename)
-    print('-' * 50)

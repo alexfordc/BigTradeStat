@@ -55,4 +55,6 @@ for a in range(len(codelist)):      #按照code列表中的顺序依次处理
             stat_df = stat_by_biglines(biglines,df,stat_df,indexlists,day)  #根据之前获取的行的index、大单线列表进行统计数据
             update_listfile(already_statbig_logfile, statbig_file)      #更新已进行大单统计的文件列表
         save_statbig_excel(code,stat_df)
-#        calc_correlation(code,biglines,filename)
+
+    ### 相关系数计算 ###
+    calc_correlation(code,biglines)

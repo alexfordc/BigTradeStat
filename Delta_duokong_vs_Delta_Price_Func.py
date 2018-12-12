@@ -135,7 +135,7 @@ def getdate(datafile):
     return (fdate)
 
 def classify_by_nature(df):
-    naturelist = ['多开', '空平', '空开', '多平', '双开', '多换', '双平', '空换']
+    naturelist = ['多开', '空平', '空开', '多平', '双开', '多换', '双平', '空换','未知']
     classify_df = df.loc[:, ['时间', '价格', '现手', '增仓']]
     nature_index = {}
     for i in range(len(naturelist)):

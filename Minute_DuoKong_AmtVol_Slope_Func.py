@@ -30,3 +30,15 @@ def get_treated_files(code, already_statminute_files, treated_path):
     else:
         print('需统计%d个%s数据文件: %s' % (len(codefiles), code, ', '.join(codefiles)))
     return codefiles
+
+def read_file(file_path,filename):
+    '''读取原始数据文件存放路径下的数据文件。特指处理后的数据文件，各列依次为（时间,价格,价格方向,现手,成交方向,增仓,性质）'''
+    dffile = open(file_path + filename)
+    df = pd.read_csv(dffile, usecols=(0, 1, 3, 5, 6),dtype={'时间': str, '价格': np.float64, '现手': np.float64, '增仓': np.float64, '性质': str})
+    dffile.close()
+    return df
+
+def get_minute_index(time_Series):
+    '''根据时间获取各时间对应的index'''
+    timelist = time_Series.tolist()
+    return True

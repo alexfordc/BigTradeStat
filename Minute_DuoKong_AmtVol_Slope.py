@@ -23,3 +23,5 @@ for i in range(len(codelist)):      #按照code列表中的顺序依次处理
         for j in range(len(treated_files)):
             treated_file = treated_files[j]
             print(treated_file)
+            df = read_file(treated_path,treated_file)
+            minute_indexs = get_minute_index(df.时间)

@@ -33,4 +33,4 @@ for a in range(len(codelist)):      #按照code列表中的顺序依次处理
             treated_df = volumn_classify(pre_oi,df)     #加入实时总交易量、持仓量，将现手按性质分列输出
             save_treated_csv(datafile,treated_df,treated_path)     #保存增加持仓、性质分列后的数据到指定路径
             update_listfile(already_read_logfile,datafile)   #更新已读文件列表
-        print('所有%s原始数据文件已增加持仓数据、按性质分列' % code)
+        #print('所有%s原始数据文件已增加持仓数据、按性质分列' % code)

@@ -25,3 +25,5 @@ for i in range(len(codelist)):      #按照code列表中的顺序依次处理
             print(treated_file)
             df = read_file(treated_path,treated_file)
             minute_indexs = get_minute_index(df.时间)
+            minute,Amount_Duo,Amount_Kong,delta_Amount,Count_Duo,Count_Kong,delta_Count = minute_stat(df,minute_indexs)
+            test = later_minute_stat(df,minute_indexs,10)
